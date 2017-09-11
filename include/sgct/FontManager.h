@@ -63,12 +63,12 @@ public:
     bool addFont( const std::string & fontName, std::string path, FontPath fontPath = FontPath_Default );
     Font * getFont( const std::string & name, unsigned int height = mDefaultHeight );
     Font * getDefaultFont( unsigned int height = mDefaultHeight );
-	
-	void setDefaultFontPath( const std::string & path );
+    
+    void setDefaultFontPath( const std::string & path );
     void setStrokeColor( glm::vec4 color );
     void setDrawInScreenSpace( bool state );
 
-	std::size_t getTotalNumberOfLoadedChars();
+    std::size_t getTotalNumberOfLoadedChars();
     inline glm::vec4 getStrokeColor() { return mStrokeColor; }
     inline bool getDrawInScreenSpace() { return mDrawInScreenSpace; }
 
@@ -101,8 +101,8 @@ public:
 private:
     FontManager(void);
 
-	/// Helper functions
-	Font * createFont( const std::string & fontName, unsigned int height );
+    /// Helper functions
+    Font * createFont( const std::string & fontName, unsigned int height );
 
     // Don't implement these, should give compile warning if used
     FontManager( const FontManager & fm );
@@ -116,13 +116,13 @@ private:
     std::string mDefaultFontPath;            // The default font path from where to look for font files
 
     FT_Library  mFTLibrary;                    // Freetype library
-	FT_Face mFace;
+    FT_Face mFace;
     glm::vec4 mStrokeColor;
 
     bool mDrawInScreenSpace;
 
     std::map<std::string, std::string> mFontPaths; // Holds all predefined font paths for generating font glyphs
-	sgct_cppxeleven::unordered_map<std::string, sgct_cppxeleven::unordered_map<unsigned int, Font*>> mFontMap; // All generated fonts
+    sgct_cppxeleven::unordered_map<std::string, sgct_cppxeleven::unordered_map<unsigned int, Font*>> mFontMap; // All generated fonts
 
     sgct::ShaderProgram mShader;
     int mMVPLoc, mColLoc, mStkLoc, mTexLoc;

@@ -37,9 +37,9 @@ The figure below illustrates when different callbacks (gray and blue boxes) are 
 */
 class Engine
 {
-	friend class sgct_core::FisheyeProjection; //needs to access draw callbacks
-	friend class sgct_core::SphericalMirrorProjection; //needs to access draw callbacks
-	friend class sgct_core::SpoutOutputProjection; //needs to access draw callbacks
+    friend class sgct_core::FisheyeProjection; //needs to access draw callbacks
+    friend class sgct_core::SphericalMirrorProjection; //needs to access draw callbacks
+    friend class sgct_core::SpoutOutputProjection; //needs to access draw callbacks
 
 //all enums
 public:
@@ -167,9 +167,9 @@ public:
     void setScreenShotNumber(unsigned int number);
     unsigned int getScreenShotNumber();
     void invokeScreenShotCallback1(sgct_core::Image * imPtr, std::size_t winIndex, sgct_core::ScreenCapture::EyeIndex ei, unsigned int type);
-	void invokeScreenShotCallback2(unsigned char * imPtr, std::size_t winIndex, sgct_core::ScreenCapture::EyeIndex ei, unsigned int type);
+    void invokeScreenShotCallback2(unsigned char * imPtr, std::size_t winIndex, sgct_core::ScreenCapture::EyeIndex ei, unsigned int type);
     void setScreenShotCallback(void(*fnPtr)(sgct_core::Image *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type));
-	void setScreenShotCallback(void(*fnPtr)(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type));
+    void setScreenShotCallback(void(*fnPtr)(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type));
 
     std::size_t createTimer( double millisec, void(*fnPtr)(std::size_t) );
     void stopTimer(std::size_t id);
@@ -445,8 +445,8 @@ private:
     typedef sgct_cppxeleven::function<void(const char *, int)> ExternalDecodeCallbackFn;
     typedef sgct_cppxeleven::function<void(bool)> ExternalStatusCallbackFn;
     typedef sgct_cppxeleven::function<void(sgct_core::Image*, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type)> ScreenShotFn1;
-	typedef sgct_cppxeleven::function<void(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type)> ScreenShotFn2;
-	typedef sgct_cppxeleven::function<void(GLFWwindow*)> ContextCreationFn;
+    typedef sgct_cppxeleven::function<void(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type)> ScreenShotFn2;
+    typedef sgct_cppxeleven::function<void(GLFWwindow*)> ContextCreationFn;
 #else
     typedef void(*CallbackFn)(void);
     typedef void(*DataTransferDecodeCallbackFn)(void *, int, int, int);
@@ -455,8 +455,8 @@ private:
     typedef void(*ExternalDecodeCallbackFn)(const char *, int);
     typedef void(*ExternalStatusCallbackFn)(bool);
     typedef void(*ScreenShotFn1)(sgct_core::Image*, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type);
-	typedef void(*ScreenShotFn2)(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type);
-	typedef void(*ContextCreationFn)(GLFWwindow*);
+    typedef void(*ScreenShotFn2)(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type);
+    typedef void(*ContextCreationFn)(GLFWwindow*);
 #endif
 
     typedef void (Engine::*InternalCallbackFn)(void);
@@ -479,7 +479,7 @@ private:
     DataTransferStatusCallbackFn        mDataTransferStatusCallbackFnPtr;
     DataTransferAcknowledgeCallbackFn    mDataTransferAcknowledgeCallbackFnPtr;
     ScreenShotFn1                        mScreenShotFnPtr1;
-	ScreenShotFn2                        mScreenShotFnPtr2; //less latency, more advanced
+    ScreenShotFn2                        mScreenShotFnPtr2; //less latency, more advanced
     ContextCreationFn                    mContextCreationFnPtr;
     
     InternalCallbackFn                    mInternalDrawFn;

@@ -107,7 +107,7 @@ sgct_core::Image::Image()
     mDataSize = 0;
     mExternalData = false;
     mPreferBGRForExport = true;
-	mPreferBGRForImport = true;
+    mPreferBGRForImport = true;
 }
 
 sgct_core::Image::~Image()
@@ -489,8 +489,8 @@ bool sgct_core::Image::loadPNG(std::string filename)
     png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&mSize_x, (png_uint_32 *)&mSize_y, &bpp, &color_type, NULL, NULL, NULL);
     
     //set options
-	if(mPreferBGRForImport)
-		png_set_bgr(png_ptr);
+    if(mPreferBGRForImport)
+        png_set_bgr(png_ptr);
     if (bpp < 8)
         png_set_packing(png_ptr);
     else if(bpp == 16)
@@ -602,8 +602,8 @@ bool sgct_core::Image::loadPNG(unsigned char * data, std::size_t len)
     png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&mSize_x, (png_uint_32 *)&mSize_y, &bpp, &color_type, NULL, NULL, NULL);
     
     //set options
-	if(mPreferBGRForImport)
-		png_set_bgr(png_ptr);
+    if(mPreferBGRForImport)
+        png_set_bgr(png_ptr);
     if (bpp < 8)
         png_set_packing(png_ptr);
     else if (bpp == 16)
@@ -1261,9 +1261,9 @@ bool sgct_core::Image::saveTGA()
     // convert the image data from RGB(a) to BGR(A)
     if (!mPreferBGRForExport)
     {
-		mPreferBGRForImport = true;//reset BGR flag for texture manager
-		
-		unsigned char tmp;
+        mPreferBGRForImport = true;//reset BGR flag for texture manager
+        
+        unsigned char tmp;
         if (mChannels >= 3)
             for (std::size_t i = 0; i < mDataSize; i += mChannels)
             {
@@ -1398,17 +1398,17 @@ Set if color pixel data should be stored as BGR(A) or RGB(A). BGR(A) is native f
 */
 void sgct_core::Image::setPreferBGRImport(bool state)
 {
-	mPreferBGRForImport = state;
+    mPreferBGRForImport = state;
 }
 
 bool sgct_core::Image::getPreferBGRExport() const
 {
-	return mPreferBGRForExport;
+    return mPreferBGRForExport;
 }
 
 bool sgct_core::Image::getPreferBGRImport() const
 {
-	return mPreferBGRForImport;
+    return mPreferBGRForImport;
 }
 
 void sgct_core::Image::cleanup()

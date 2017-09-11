@@ -473,27 +473,27 @@ namespace sgct //simple graphics cluster toolkit
         std::mutex mMutex;
     };
 
-	/*!
-	Mutex protected std::wstring for multi-thread data sharing
-	*/
-	class SharedWString
-	{
-	public:
-		SharedWString();
-		SharedWString(const std::wstring & str);
-		SharedWString(const SharedWString & ss);
+    /*!
+    Mutex protected std::wstring for multi-thread data sharing
+    */
+    class SharedWString
+    {
+    public:
+        SharedWString();
+        SharedWString(const std::wstring & str);
+        SharedWString(const SharedWString & ss);
 
-		std::wstring getVal();
-		void setVal(const std::wstring & str);
-		void clear();
+        std::wstring getVal();
+        void setVal(const std::wstring & str);
+        void clear();
 
-		void operator=(const std::wstring & str);
-		void operator=(const SharedWString & ss);
+        void operator=(const std::wstring & str);
+        void operator=(const SharedWString & ss);
 
-	private:
-		std::wstring mStr;
-		std::mutex mMutex;
-	};
+    private:
+        std::wstring mStr;
+        std::mutex mMutex;
+    };
 
     /*!
     Mutex protected template for multi-thread data sharing

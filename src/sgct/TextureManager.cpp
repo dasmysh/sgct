@@ -347,9 +347,9 @@ bool sgct::TextureManager::uploadImage(sgct_core::Image * imgPtr, unsigned int *
     glGenTextures(1, texPtr);
     glBindTexture(GL_TEXTURE_2D, *texPtr);
 
-	bool isBGR = imgPtr->getPreferBGRImport();
+    bool isBGR = imgPtr->getPreferBGRImport();
 
-	//if three channels
+    //if three channels
     int textureType = isBGR ? GL_BGR : GL_RGB;
 
     //if OpenGL 1-2
@@ -445,8 +445,8 @@ bool sgct::TextureManager::uploadImage(sgct_core::Image * imgPtr, unsigned int *
         imgPtr->getHeight(),
         imgPtr->getChannels(),
         (mCompression == No_Compression) ? "none" : ((mCompression == Generic) ? "generic" : "S3TC/DXT"),
-		textureType,
-		internalFormat);
+        textureType,
+        internalFormat);
 
     glPixelStorei(GL_PACK_ALIGNMENT, 1);
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);

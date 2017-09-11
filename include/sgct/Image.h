@@ -43,9 +43,9 @@ public:
     bool saveTGA();
     void setFilename(std::string filename);
     void setPreferBGRExport(bool state);
-	void setPreferBGRImport(bool state);
-	bool getPreferBGRExport() const;
-	bool getPreferBGRImport() const;
+    void setPreferBGRImport(bool state);
+    bool getPreferBGRExport() const;
+    bool getPreferBGRImport() const;
 
     unsigned char * getData();
     unsigned char * getDataAt(std::size_t x, std::size_t y);
@@ -90,7 +90,7 @@ private:
     unsigned char * mData;
     png_bytep * mRowPtrs;
     bool mPreferBGRForExport;
-	bool mPreferBGRForImport;
+    bool mPreferBGRForImport;
 };
 
 }

@@ -32,51 +32,51 @@ static void findAndReplace(std::string & src, std::string pattern, std::string r
 
 static std::vector<std::string> split(std::string str, char delimiter)
 {
-	std::vector<std::string> tmpVec;
-	std::stringstream ss(str);
-	std::string part;
+    std::vector<std::string> tmpVec;
+    std::stringstream ss(str);
+    std::string part;
 
-	while (getline(ss, part, delimiter)) {
-		tmpVec.push_back(part);
-	}
+    while (getline(ss, part, delimiter)) {
+        tmpVec.push_back(part);
+    }
 
-	return tmpVec;
+    return tmpVec;
 }
 
 static std::vector<std::wstring> split(std::wstring str, wchar_t delimiter)
 {
-	std::vector<std::wstring> tmpVec;
-	std::wstringstream ss(str);
-	std::wstring part;
+    std::vector<std::wstring> tmpVec;
+    std::wstringstream ss(str);
+    std::wstring part;
 
-	while (getline(ss, part, delimiter)) {
-		tmpVec.push_back(part);
-	}
+    while (getline(ss, part, delimiter)) {
+        tmpVec.push_back(part);
+    }
 
-	return tmpVec;
+    return tmpVec;
 }
 
 static std::vector<std::wstring> split(std::string str, wchar_t delimiter)
 {
-	std::vector<std::wstring> tmpVec;
-	std::wstring ws;
-	ws.assign(str.begin(), str.end());
+    std::vector<std::wstring> tmpVec;
+    std::wstring ws;
+    ws.assign(str.begin(), str.end());
 
-	std::wstringstream ss(ws);
-	std::wstring part;
+    std::wstringstream ss(ws);
+    std::wstring part;
 
-	while (getline(ss, part, delimiter)) {
-		tmpVec.push_back(part);
-	}
+    while (getline(ss, part, delimiter)) {
+        tmpVec.push_back(part);
+    }
 
-	return tmpVec;
+    return tmpVec;
 }
 
 static std::wstring makeWideString(const std::string & str)
 {
-	std::wstring ws;
-	ws.assign(str.begin(), str.end());
-	return ws;
+    std::wstring ws;
+    ws.assign(str.begin(), str.end());
+    return ws;
 }
 
 }

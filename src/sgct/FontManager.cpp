@@ -88,7 +88,7 @@ Constructor initiates the freetyp library
 sgct_text::FontManager::FontManager(void)
 {
     FT_Error error = FT_Init_FreeType( &mFTLibrary );
-	mFace = NULL;
+    mFace = NULL;
     mStrokeColor.r = 0.0f;
     mStrokeColor.g = 0.0f;
     mStrokeColor.b = 0.0f;
@@ -130,16 +130,16 @@ Destructor cleans up all font objects, textures and shaders
 */
 sgct_text::FontManager::~FontManager(void)
 {
-	for (auto& a : mFontMap)
-	{
-		for (auto& b : a.second)
-		{
-			b.second->clean();
-			delete b.second;
-		}
-		a.second.clear();
-	}
-	mFontMap.clear();
+    for (auto& a : mFontMap)
+    {
+        for (auto& b : a.second)
+        {
+            b.second->clean();
+            delete b.second;
+        }
+        a.second.clear();
+    }
+    mFontMap.clear();
 
     if( mFTLibrary != NULL )
     {
@@ -177,11 +177,11 @@ void sgct_text::FontManager::setDrawInScreenSpace( bool state )
 
 std::size_t sgct_text::FontManager::getTotalNumberOfLoadedChars()
 {
-	std::size_t counter = 0;
-	for (auto& a : mFontMap)
-		for (auto& b : a.second)
-			counter += b.second->getNumberOfLoadedChars();
-	return counter;
+    std::size_t counter = 0;
+    for (auto& a : mFontMap)
+        for (auto& b : a.second)
+            counter += b.second->getNumberOfLoadedChars();
+    return counter;
 }
 
 /*!
@@ -218,10 +218,10 @@ Get a font face that is loaded into memory.
 */
 sgct_text::Font * sgct_text::FontManager::getFont( const std::string & fontName, unsigned int height )
 {
-	if(mFontMap[fontName].count(height) == 0)
-		mFontMap[fontName][height] = createFont(fontName, height);
-		
-	return mFontMap[fontName][height];
+    if(mFontMap[fontName].count(height) == 0)
+        mFontMap[fontName][height] = createFont(fontName, height);
+        
+    return mFontMap[fontName][height];
 }
 
 /*!
@@ -242,85 +242,85 @@ Creates font textures with a specific height if a path to the font exists
 */
 sgct_text::Font * sgct_text::FontManager::createFont( const std::string & fontName, unsigned int height )
 {
-	std::map<std::string, std::string>::iterator it = mFontPaths.find( fontName );
+    std::map<std::string, std::string>::iterator it = mFontPaths.find( fontName );
 
-	if( it == mFontPaths.end() )
-	{
-		sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: No font file specified for font [%s].\n", fontName.c_str() );
-		return mFontMap.end()->second.end()->second;
-	}
+    if( it == mFontPaths.end() )
+    {
+        sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: No font file specified for font [%s].\n", fontName.c_str() );
+        return mFontMap.end()->second.end()->second;
+    }
 
-	if( mFTLibrary == NULL )
-	{
-		sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Freetype library is not initialized, can't create font [%s].\n", fontName.c_str() );
-		return mFontMap.end()->second.end()->second;
-	}
+    if( mFTLibrary == NULL )
+    {
+        sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Freetype library is not initialized, can't create font [%s].\n", fontName.c_str() );
+        return mFontMap.end()->second.end()->second;
+    }
 
-	FT_Error error = FT_New_Face( mFTLibrary, it->second.c_str(), 0, &mFace);
+    FT_Error error = FT_New_Face( mFTLibrary, it->second.c_str(), 0, &mFace);
 
-	if ( error == FT_Err_Unknown_File_Format )
-	{
-		sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Unsopperted file format [%s] for font [%s].\n", it->second.c_str(), fontName.c_str() );
-		return mFontMap.end()->second.end()->second;
-	}
-	else if( error != 0 || mFace == NULL )
-	{
-		sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Font '%s' not found!\n", it->second.c_str());
-		return mFontMap.end()->second.end()->second;
-	}
+    if ( error == FT_Err_Unknown_File_Format )
+    {
+        sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Unsopperted file format [%s] for font [%s].\n", it->second.c_str(), fontName.c_str() );
+        return mFontMap.end()->second.end()->second;
+    }
+    else if( error != 0 || mFace == NULL )
+    {
+        sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Font '%s' not found!\n", it->second.c_str());
+        return mFontMap.end()->second.end()->second;
+    }
 
-	if( FT_Set_Char_Size(mFace, height << 6, height << 6, 96, 96) != 0 )
-	{
-		sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Could not set pixel size for font[%s].\n", fontName.c_str() );
-		return mFontMap.end()->second.end()->second;
-	}
+    if( FT_Set_Char_Size(mFace, height << 6, height << 6, 96, 96) != 0 )
+    {
+        sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Could not set pixel size for font[%s].\n", fontName.c_str() );
+        return mFontMap.end()->second.end()->second;
+    }
 
-	// Create the font when all error tests are done
-	Font * newFont = new Font();
-	newFont->init( mFTLibrary, mFace, fontName, height );
+    // Create the font when all error tests are done
+    Font * newFont = new Font();
+    newFont->init( mFTLibrary, mFace, fontName, height );
 
-	static bool shaderCreated = false;
+    static bool shaderCreated = false;
 
-	if( !shaderCreated )
-	{
-		std::string vert_shader;
-		std::string frag_shader;
-		
-		mShader.setName("FontShader");
-		if( sgct::Engine::instance()->isOGLPipelineFixed() )
-		{
-			vert_shader = Font_Vert_Shader_Legacy;
-			frag_shader = Font_Frag_Shader_Legacy;
-		}
-		else
-		{
-			vert_shader = Font_Vert_Shader;
-			frag_shader = Font_Frag_Shader;
-		}
+    if( !shaderCreated )
+    {
+        std::string vert_shader;
+        std::string frag_shader;
+        
+        mShader.setName("FontShader");
+        if( sgct::Engine::instance()->isOGLPipelineFixed() )
+        {
+            vert_shader = Font_Vert_Shader_Legacy;
+            frag_shader = Font_Frag_Shader_Legacy;
+        }
+        else
+        {
+            vert_shader = Font_Vert_Shader;
+            frag_shader = Font_Frag_Shader;
+        }
 
-		//replace glsl version
-		sgct_helpers::findAndReplace(vert_shader, "**glsl_version**", sgct::Engine::instance()->getGLSLVersion());
-		sgct_helpers::findAndReplace(frag_shader, "**glsl_version**", sgct::Engine::instance()->getGLSLVersion());
+        //replace glsl version
+        sgct_helpers::findAndReplace(vert_shader, "**glsl_version**", sgct::Engine::instance()->getGLSLVersion());
+        sgct_helpers::findAndReplace(frag_shader, "**glsl_version**", sgct::Engine::instance()->getGLSLVersion());
 
-		if(!mShader.addShaderSrc(vert_shader, GL_VERTEX_SHADER, sgct::ShaderProgram::SHADER_SRC_STRING))
-			sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Failed to load font vertex shader\n");
-		if(!mShader.addShaderSrc(frag_shader, GL_FRAGMENT_SHADER, sgct::ShaderProgram::SHADER_SRC_STRING))
-			sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Failed to load font fragment shader\n");
-		mShader.createAndLinkProgram();
-		mShader.bind();
+        if(!mShader.addShaderSrc(vert_shader, GL_VERTEX_SHADER, sgct::ShaderProgram::SHADER_SRC_STRING))
+            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Failed to load font vertex shader\n");
+        if(!mShader.addShaderSrc(frag_shader, GL_FRAGMENT_SHADER, sgct::ShaderProgram::SHADER_SRC_STRING))
+            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Failed to load font fragment shader\n");
+        mShader.createAndLinkProgram();
+        mShader.bind();
 
-		if( !sgct::Engine::instance()->isOGLPipelineFixed() )
-			mMVPLoc = mShader.getUniformLocation( "MVP" );
-		mColLoc = mShader.getUniformLocation( "Col" );
-		mStkLoc = mShader.getUniformLocation( "StrokeCol" );
-		mTexLoc = mShader.getUniformLocation( "Tex" );
-		mShader.unbind();
+        if( !sgct::Engine::instance()->isOGLPipelineFixed() )
+            mMVPLoc = mShader.getUniformLocation( "MVP" );
+        mColLoc = mShader.getUniformLocation( "Col" );
+        mStkLoc = mShader.getUniformLocation( "StrokeCol" );
+        mTexLoc = mShader.getUniformLocation( "Tex" );
+        mShader.unbind();
 
-		shaderCreated = true;
-	}
+        shaderCreated = true;
+    }
 
-	//sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Number of textures loaded: %u\n", newFont.getNumberOfTextures());
+    //sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Number of textures loaded: %u\n", newFont.getNumberOfTextures());
 
-	mFontMap[fontName][height] = newFont;
-	return newFont;
+    mFontMap[fontName][height] = newFont;
+    return newFont;
 }
