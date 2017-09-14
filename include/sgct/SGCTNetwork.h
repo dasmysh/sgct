@@ -18,10 +18,10 @@ For conditions of distribution and use, see copyright notice in sgct.h
     #define _WIN_PLATFORM
     typedef size_t SGCT_SOCKET;
 #else //linux & OS X
-    typedef int SGCT_SOCKET;
+    using SGCT_SOCKET = int;
 #endif
 
-typedef int _ssize_t;
+using _ssize_t = int;
 
 #include <atomic>
 #include <condition_variable>

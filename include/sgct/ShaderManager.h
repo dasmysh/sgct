@@ -27,7 +27,7 @@ public:
     //! Different shader bin indexes to use with the manager
     enum ShaderBinIndex { SHADER_BIN_0 = 0, SHADER_BIN_1, SHADER_BIN_2, SHADER_BIN_3, SHADER_BIN_4, SHADER_BIN_5, SHADER_BIN_6, SHADER_BIN_7 };
 
-    ~ShaderManager(void);
+    ~ShaderManager();
 
     bool addShaderProgram( const std::string & name, ShaderProgram & shaderProgram );
 
@@ -74,7 +74,7 @@ public:
     /*! Get the manager instance */
     static ShaderManager * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new ShaderManager();
         }
@@ -85,15 +85,15 @@ public:
     /*! Destroy the ShaderManager */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
 private:
-    ShaderManager(void);
+    ShaderManager();
 
     // Don't implement these, should give compile warning if used
     ShaderManager( const ShaderManager & tm );

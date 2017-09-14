@@ -12,12 +12,12 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <glm/gtc/constants.hpp>
 
 /*!
-    This constructor requires a valid openGL contex
+    This constructor requires a valid openGL context
 */
 sgct_utils::SGCTSphere::SGCTSphere(float radius, unsigned int segments)
 {
-    mVerts = NULL;
-    mIndices = NULL;
+    mVerts = nullptr;
+    mIndices = nullptr;
     mVBO[Vertex] = GL_FALSE;
     mVBO[Index] = GL_FALSE;
     mVAO = GL_FALSE;
@@ -41,7 +41,7 @@ sgct_utils::SGCTSphere::SGCTSphere(float radius, unsigned int segments)
     memset(mVerts, 0, mNumberOfVertices * sizeof(sgct_helpers::SGCTVertexData));
 
     mIndices = new (std::nothrow) unsigned int[mNumberOfFaces * 3];
-    if (mIndices == NULL)
+    if (mIndices == nullptr)
         return;
 
     memset(mIndices, 0, mNumberOfFaces * 3 * sizeof(unsigned int));
@@ -122,16 +122,16 @@ sgct_utils::SGCTSphere::SGCTSphere(float radius, unsigned int segments)
     }
 
     //free data
-    if( mVerts != NULL )
+    if( mVerts != nullptr )
     {
         delete [] mVerts;
-        mVerts = NULL;
+        mVerts = nullptr;
     }
 
-    if( mIndices != NULL )
+    if( mIndices != nullptr )
     {
         delete [] mIndices;
-        mIndices = NULL;
+        mIndices = nullptr;
     }
 }
 
@@ -186,8 +186,8 @@ void sgct_utils::SGCTSphere::drawVBO()
     glBindBuffer(GL_ARRAY_BUFFER, mVBO[Vertex]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBO[Index]);
 
-    glInterleavedArrays(GL_T2F_N3F_V3F, 0, 0);
-    glDrawElements(GL_TRIANGLES, mNumberOfFaces * 3, GL_UNSIGNED_INT, 0);
+    glInterleavedArrays(GL_T2F_N3F_V3F, 0, nullptr);
+    glDrawElements(GL_TRIANGLES, mNumberOfFaces * 3, GL_UNSIGNED_INT, nullptr);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -198,7 +198,7 @@ void sgct_utils::SGCTSphere::drawVBO()
 void sgct_utils::SGCTSphere::drawVAO()
 {
     glBindVertexArray( mVAO );
-    glDrawElements(GL_TRIANGLES, mNumberOfFaces * 3, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, mNumberOfFaces * 3, GL_UNSIGNED_INT, nullptr);
     glBindVertexArray(0);
 }
 

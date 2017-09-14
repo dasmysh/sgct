@@ -25,19 +25,18 @@ public:
     enum TextureMappingMode { Regular = 0, CubeMap, SkyBox };
 
     SGCTBox(float size, TextureMappingMode tmm = Regular);
+
+    SGCTBox(const SGCTBox & box) = delete;
+    const SGCTBox & operator=(const SGCTBox & box) = delete;
+
     ~SGCTBox();
     void draw();
 
 private:
-    // Don't implement these, should give compile warning if used
-    SGCTBox();
-    SGCTBox( const SGCTBox & box );
-    const SGCTBox & operator=(const SGCTBox & box );
-
     void drawVBO();
     void drawVAO();
 
-    typedef void (SGCTBox::*InternalCallbackFn)(void);
+    using InternalCallbackFn = void (SGCTBox::*)();
     InternalCallbackFn    mInternalDrawFn;
 
     void cleanUp();

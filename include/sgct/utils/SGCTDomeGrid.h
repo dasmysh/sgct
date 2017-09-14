@@ -18,20 +18,20 @@ class SGCTDomeGrid
 {
 public:
     SGCTDomeGrid(float radius, float FOV, unsigned int segments, unsigned int rings, unsigned int resolution = 128);
+
+    SGCTDomeGrid(const SGCTDomeGrid & dome) = delete;
+    const SGCTDomeGrid & operator=(const SGCTDomeGrid & dome) = delete;
+
     ~SGCTDomeGrid();
     void draw();
 
 private:
     void init(float radius, float FOV, unsigned int segments, unsigned int rings, unsigned int resolution);
-    // Don't implement these, should give compile warning if used
-    SGCTDomeGrid();
-    SGCTDomeGrid( const SGCTDomeGrid & dome );
-    const SGCTDomeGrid & operator=(const SGCTDomeGrid & dome );
 
     void drawVBO();
     void drawVAO();
 
-    typedef void (SGCTDomeGrid::*InternalCallbackFn)(void);
+    using InternalCallbackFn = void (SGCTDomeGrid::*)();
     InternalCallbackFn    mInternalDrawFn;
 
     void createVBO();

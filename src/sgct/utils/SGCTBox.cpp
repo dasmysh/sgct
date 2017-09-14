@@ -18,7 +18,7 @@ sgct_utils::SGCTBox::SGCTBox(float size, TextureMappingMode tmm)
     //init
     mVBO = GL_FALSE;
     mVAO = GL_FALSE;
-    mVerts = NULL;
+    mVerts = nullptr;
 
     mInternalDrawFn = &SGCTBox::drawVBO;
 
@@ -186,10 +186,10 @@ sgct_utils::SGCTBox::SGCTBox(float size, TextureMappingMode tmm)
     }
 
     //free data
-    if( mVerts != NULL )
+    if( mVerts != nullptr )
     {
         delete [] mVerts;
-        mVerts = NULL;
+        mVerts = nullptr;
     }
 }
 
@@ -218,7 +218,7 @@ void sgct_utils::SGCTBox::drawVBO()
     
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
     
-    glInterleavedArrays(GL_T2F_N3F_V3F, 0, 0);
+    glInterleavedArrays(GL_T2F_N3F_V3F, 0, nullptr);
     glDrawArrays(GL_TRIANGLES, 0, 36);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);

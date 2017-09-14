@@ -112,7 +112,7 @@ bool sgct_core::ReadConfig::replaceEnvVars( const std::string &filename )
         {
             xmlFileName.append(filename.substr(appendPos, beginEnvVar[i] - appendPos));
             std::string envVar = filename.substr(beginEnvVar[i] + 2, endEnvVar[i] - (beginEnvVar[i] + 2) );
-            char * fetchedEnvVar = NULL;
+            char * fetchedEnvVar = nullptr;
             
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
             size_t len;
@@ -138,9 +138,9 @@ bool sgct_core::ReadConfig::replaceEnvVars( const std::string &filename )
         xmlFileName.append( filename.substr( appendPos ) );
         
         //replace all backslashes with slashes
-        for(unsigned int i=0; i<xmlFileName.size(); i++)
-            if(xmlFileName[i] == 92) //backslash
-                xmlFileName[i] = '/';
+        for(char & i : xmlFileName)
+            if(i == 92) //backslash
+                i = '/';
     }
     
     return true;
@@ -200,7 +200,7 @@ bool sgct_core::ReadConfig::readAndParseXMLString()
 bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
 {
     tinyxml2::XMLElement* XMLroot = xmlDoc.FirstChildElement( "Cluster" );
-    if( XMLroot == NULL )
+    if( XMLroot == nullptr )
     {
         mErrorMsg.assign("Cannot find XML root!");
         return false;
@@ -216,37 +216,37 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
     }
     
     const char * debugMode = XMLroot->Attribute( "debug" );
-    if( debugMode != NULL )
+    if( debugMode != nullptr )
     {
         sgct::MessageHandler::instance()->setNotifyLevel( strcmp( debugMode, "true" ) == 0 ?
                                                          sgct::MessageHandler::NOTIFY_DEBUG : sgct::MessageHandler::NOTIFY_WARNING );
     }
     
-    if( XMLroot->Attribute( "externalControlPort" ) != NULL )
+    if( XMLroot->Attribute( "externalControlPort" ) != nullptr )
     {
         std::string tmpStr( XMLroot->Attribute( "externalControlPort" ) );
         ClusterManager::instance()->setExternalControlPort(tmpStr);
     }
     
-    if( XMLroot->Attribute( "firmSync" ) != NULL )
+    if( XMLroot->Attribute( "firmSync" ) != nullptr )
     {
         ClusterManager::instance()->setFirmFrameLockSyncStatus(
                                                                strcmp( XMLroot->Attribute( "firmSync" ), "true" ) == 0 ? true : false );
     }
     
     tinyxml2::XMLElement* element[MAX_XML_DEPTH];
-    for(unsigned int i=0; i < MAX_XML_DEPTH; i++)
-        element[i] = NULL;
+    for(auto & i : element)
+        i = nullptr;
     const char * val[MAX_XML_DEPTH];
     element[0] = XMLroot->FirstChildElement();
-    while( element[0] != NULL )
+    while( element[0] != nullptr )
     {
         val[0] = element[0]->Value();
         
         if( strcmp("Scene", val[0]) == 0 )
         {
             element[1] = element[0]->FirstChildElement();
-            while( element[1] != NULL )
+            while( element[1] != nullptr )
             {
                 val[1] = element[1]->Value();
                 
@@ -310,46 +310,46 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
             if (element[0]->Attribute("dataTransferPort"))
                 tmpNode.setDataTransferPort(element[0]->Attribute("dataTransferPort"));
             
-            if( element[0]->Attribute("swapLock") != NULL )
+            if( element[0]->Attribute("swapLock") != nullptr )
                 tmpNode.setUseSwapGroups( strcmp( element[0]->Attribute("swapLock"), "true" ) == 0 ? true : false );
             
             element[1] = element[0]->FirstChildElement();
-            while( element[1] != NULL )
+            while( element[1] != nullptr )
             {
                 val[1] = element[1]->Value();
                 if( strcmp("Window", val[1]) == 0 )
                 {
                     sgct::SGCTWindow tmpWin( static_cast<int>(tmpNode.getNumberOfWindows()) );
                     
-                    if( element[1]->Attribute("name") != NULL )
+                    if( element[1]->Attribute("name") != nullptr )
                         tmpWin.setName( element[1]->Attribute("name") );
 
-                    if (element[1]->Attribute("tags") != NULL)
+                    if (element[1]->Attribute("tags") != nullptr)
                         tmpWin.setTags(element[1]->Attribute("tags"));
 
-                    if (element[1]->Attribute("bufferBitDepth") != NULL)
+                    if (element[1]->Attribute("bufferBitDepth") != nullptr)
                         tmpWin.setColorBitDepth(getBufferColorBitDepth(element[1]->Attribute("bufferBitDepth")));
 
-                    if (element[1]->Attribute("preferBGR") != NULL)
+                    if (element[1]->Attribute("preferBGR") != nullptr)
                         tmpWin.setPreferBGR(strcmp(element[1]->Attribute("preferBGR"), "true") == 0);
                         
                     //compability with older versions
-                    if (element[1]->Attribute("fullScreen") != NULL)
+                    if (element[1]->Attribute("fullScreen") != nullptr)
                         tmpWin.setWindowMode(strcmp(element[1]->Attribute("fullScreen"), "true") == 0);
 
-                    if( element[1]->Attribute("fullscreen") != NULL )
+                    if( element[1]->Attribute("fullscreen") != nullptr )
                         tmpWin.setWindowMode( strcmp( element[1]->Attribute("fullscreen"), "true" ) == 0 );
                     
-                    if( element[1]->Attribute("floating") != NULL )
+                    if( element[1]->Attribute("floating") != nullptr )
                         tmpWin.setFloating( strcmp( element[1]->Attribute("floating"), "true" ) == 0 );
 
-                    if (element[1]->Attribute("alwaysRender") != NULL)
+                    if (element[1]->Attribute("alwaysRender") != nullptr)
                         tmpWin.setRenderWhileHidden(strcmp(element[1]->Attribute("alwaysRender"), "true") == 0);
 
-                    if (element[1]->Attribute("hidden") != NULL)
+                    if (element[1]->Attribute("hidden") != nullptr)
                         tmpWin.setVisibility(!(strcmp(element[1]->Attribute("hidden"), "true") == 0));
 
-                    if (element[1]->Attribute("dbuffered") != NULL)
+                    if (element[1]->Attribute("dbuffered") != nullptr)
                         tmpWin.setDoubleBuffered(strcmp(element[1]->Attribute("dbuffered"), "true") == 0);
 
                     float gamma = 0.0f;
@@ -373,19 +373,19 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                     else if (element[1]->QueryIntAttribute("MSAA", &tmpSamples) == tinyxml2::XML_NO_ERROR && tmpSamples <= 128)
                         tmpWin.setNumberOfAASamples(tmpSamples);
                     
-                    if (element[1]->Attribute("alpha") != NULL)
+                    if (element[1]->Attribute("alpha") != nullptr)
                         tmpWin.setAlpha(strcmp(element[1]->Attribute("alpha"), "true") == 0 ? true : false);
                     
-                    if( element[1]->Attribute("fxaa") != NULL )
+                    if( element[1]->Attribute("fxaa") != nullptr )
                         tmpWin.setUseFXAA( strcmp( element[1]->Attribute("fxaa"), "true" ) == 0 ? true : false );
                     
-                    if( element[1]->Attribute("FXAA") != NULL )
+                    if( element[1]->Attribute("FXAA") != nullptr )
                         tmpWin.setUseFXAA( strcmp( element[1]->Attribute("FXAA"), "true" ) == 0 ? true : false );
                     
-                    if( element[1]->Attribute("decorated") != NULL )
+                    if( element[1]->Attribute("decorated") != nullptr )
                         tmpWin.setWindowDecoration( strcmp( element[1]->Attribute("decorated"), "true" ) == 0 ? true : false);
                     
-                    if( element[1]->Attribute("border") != NULL )
+                    if( element[1]->Attribute("border") != nullptr )
                         tmpWin.setWindowDecoration( strcmp( element[1]->Attribute("border"), "true" ) == 0 ? true : false);
                     
                     int tmpMonitorIndex = 0;
@@ -393,7 +393,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                         tmpWin.setFullScreenMonitorIndex( tmpMonitorIndex );
                     
                     element[2] = element[1]->FirstChildElement();
-                    while( element[2] != NULL )
+                    while( element[2] != nullptr )
                     {
                         val[2] = element[2]->Value();
                         int tmpWinData[2];
@@ -432,7 +432,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                         }
                         else if(strcmp("Viewport", val[2]) == 0)
                         {
-                            Viewport * vpPtr = new sgct_core::Viewport();
+                            auto * vpPtr = new sgct_core::Viewport();
                             vpPtr->configure(element[2]);
                             tmpWin.addViewport(vpPtr);
                         }
@@ -454,7 +454,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
         else if( strcmp("User", val[0]) == 0 )
         {
             SGCTUser * usrPtr;
-            if (element[0]->Attribute("name") != NULL)
+            if (element[0]->Attribute("name") != nullptr)
             {
                 std::string name(element[0]->Attribute("name"));
                 usrPtr = new SGCTUser(name);
@@ -471,7 +471,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
              sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "ReadConfig: Failed to parse user eye separation from XML!\n");*/
             
             element[1] = element[0]->FirstChildElement();
-            while( element[1] != NULL )
+            while( element[1] != nullptr )
             {
                 val[1] = element[1]->Value();
                 
@@ -506,7 +506,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                 else if (strcmp("Matrix", val[1]) == 0)
                 {
                     bool transpose = true;
-                    if (element[1]->Attribute("transpose") != NULL)
+                    if (element[1]->Attribute("transpose") != nullptr)
                         transpose = (strcmp(element[1]->Attribute("transpose"), "true") == 0);
 
                     float tmpf[16];
@@ -538,8 +538,8 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                 }
                 else if( strcmp("Tracking", val[1]) == 0 )
                 {
-                    if(    element[1]->Attribute("tracker") != NULL &&
-                       element[1]->Attribute("device") != NULL )
+                    if(    element[1]->Attribute("tracker") != nullptr &&
+                       element[1]->Attribute("device") != nullptr )
                     {
                         usrPtr->setHeadTracker( element[1]->Attribute("tracker"), element[1]->Attribute("device") );
                     }
@@ -557,46 +557,46 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
         }//end settings
         else if( strcmp("Capture", val[0]) == 0 )
         {
-            if( element[0]->Attribute("path") != NULL )
+            if( element[0]->Attribute("path") != nullptr )
             {
                 sgct::SGCTSettings::instance()->setCapturePath( element[0]->Attribute("path"), sgct::SGCTSettings::Mono );
                 sgct::SGCTSettings::instance()->setCapturePath( element[0]->Attribute("path"), sgct::SGCTSettings::LeftStereo );
                 sgct::SGCTSettings::instance()->setCapturePath( element[0]->Attribute("path"), sgct::SGCTSettings::RightStereo );
             }
-            if( element[0]->Attribute("monoPath") != NULL )
+            if( element[0]->Attribute("monoPath") != nullptr )
             {
                 sgct::SGCTSettings::instance()->setCapturePath( element[0]->Attribute("monoPath"), sgct::SGCTSettings::Mono );
             }
-            if( element[0]->Attribute("leftPath") != NULL )
+            if( element[0]->Attribute("leftPath") != nullptr )
             {
                 sgct::SGCTSettings::instance()->setCapturePath( element[0]->Attribute("leftPath"), sgct::SGCTSettings::LeftStereo );
             }
-            if( element[0]->Attribute("rightPath") != NULL )
+            if( element[0]->Attribute("rightPath") != nullptr )
             {
                 sgct::SGCTSettings::instance()->setCapturePath( element[0]->Attribute("rightPath"), sgct::SGCTSettings::RightStereo );
             }
             
-            if( element[0]->Attribute("format") != NULL )
+            if( element[0]->Attribute("format") != nullptr )
             {
                 sgct::SGCTSettings::instance()->setCaptureFormat( element[0]->Attribute("format") );
             }
         }
-        else if( strcmp("Tracker", val[0]) == 0 && element[0]->Attribute("name") != NULL )
+        else if( strcmp("Tracker", val[0]) == 0 && element[0]->Attribute("name") != nullptr )
         {
             ClusterManager::instance()->getTrackingManagerPtr()->addTracker( std::string(element[0]->Attribute("name")) );
             
             element[1] = element[0]->FirstChildElement();
-            while( element[1] != NULL )
+            while( element[1] != nullptr )
             {
                 val[1] = element[1]->Value();
                 
-                if( strcmp("Device", val[1]) == 0 && element[1]->Attribute("name") != NULL)
+                if( strcmp("Device", val[1]) == 0 && element[1]->Attribute("name") != nullptr)
                 {
                     ClusterManager::instance()->getTrackingManagerPtr()->addDeviceToCurrentTracker( std::string(element[1]->Attribute("name")) );
                     
                     element[2] = element[1]->FirstChildElement();
                     
-                    while( element[2] != NULL )
+                    while( element[2] != nullptr )
                     {
                         val[2] = element[2]->Value();
                         unsigned int tmpUI = 0;
@@ -604,7 +604,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                         
                         if( strcmp("Sensor", val[2]) == 0 )
                         {
-                            if( element[2]->Attribute("vrpnAddress") != NULL &&
+                            if( element[2]->Attribute("vrpnAddress") != nullptr &&
                                element[2]->QueryIntAttribute("id", &tmpi) == tinyxml2::XML_NO_ERROR )
                             {
                                 ClusterManager::instance()->getTrackingManagerPtr()->addSensorToCurrentDevice(
@@ -613,7 +613,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                         }
                         else if( strcmp("Buttons", val[2]) == 0 )
                         {
-                            if(element[2]->Attribute("vrpnAddress") != NULL &&
+                            if(element[2]->Attribute("vrpnAddress") != nullptr &&
                                element[2]->QueryUnsignedAttribute("count", &tmpUI) == tinyxml2::XML_NO_ERROR )
                             {
                                 ClusterManager::instance()->getTrackingManagerPtr()->addButtonsToCurrentDevice(
@@ -623,7 +623,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                         }
                         else if( strcmp("Axes", val[2]) == 0 )
                         {
-                            if(element[2]->Attribute("vrpnAddress") != NULL &&
+                            if(element[2]->Attribute("vrpnAddress") != nullptr &&
                                element[2]->QueryUnsignedAttribute("count", &tmpUI) == tinyxml2::XML_NO_ERROR )
                             {
                                 ClusterManager::instance()->getTrackingManagerPtr()->addAnalogsToCurrentDevice(
@@ -661,7 +661,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                         else if (strcmp("Matrix", val[2]) == 0)
                         {
                             bool transpose = true;
-                            if (element[2]->Attribute("transpose") != NULL)
+                            if (element[2]->Attribute("transpose") != nullptr)
                                 transpose = (strcmp(element[2]->Attribute("transpose"), "true") == 0);
                             
                             float tmpf[16];
@@ -733,7 +733,7 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                 else if (strcmp("Matrix", val[1]) == 0)
                 {
                     bool transpose = true;
-                    if (element[1]->Attribute("transpose") != NULL)
+                    if (element[1]->Attribute("transpose") != nullptr)
                         transpose = (strcmp(element[1]->Attribute("transpose"), "true") == 0);
 
                     float tmpf[16];

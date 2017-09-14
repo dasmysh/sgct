@@ -20,6 +20,10 @@ class SGCTSphere
 {
 public:
     SGCTSphere(float radius, unsigned int segments);
+
+    SGCTSphere(const SGCTSphere & sphere) = delete;
+    const SGCTSphere & operator=(const SGCTSphere & sphere) = delete;
+
     ~SGCTSphere();
     void draw();
 
@@ -32,18 +36,13 @@ private:
     void drawVBO();
     void drawVAO();
 
-    typedef void (SGCTSphere::*InternalCallbackFn)(void);
+    using InternalCallbackFn = void (SGCTSphere::*)();
     InternalCallbackFn    mInternalDrawFn;
 
     void createVBO();
     void cleanUp();
 
-private:
-    // Don't implement these, should give compile warning if used
-    SGCTSphere();
-    SGCTSphere( const SGCTSphere & sphere );
-    const SGCTSphere & operator=(const SGCTSphere & sphere );
-    
+private:    
     sgct_helpers::SGCTVertexData * mVerts;
     unsigned int * mIndices;
 

@@ -189,7 +189,7 @@ void sgct_utils::SGCTDome::drawVBO()
     glBindBuffer(GL_ARRAY_BUFFER, mVBO[Vertex]);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, mVBO[Index]);
 
-    glInterleavedArrays(GL_T2F_N3F_V3F, 0, 0);
+    glInterleavedArrays(GL_T2F_N3F_V3F, 0, nullptr);
     
     unsigned int offset;
     unsigned int size;

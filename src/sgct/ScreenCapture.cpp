@@ -17,9 +17,9 @@ void screenCaptureHandler(void *arg);
 sgct_core::ScreenCaptureThreadInfo::ScreenCaptureThreadInfo()
 {
     mRunning = false;
-    mframeBufferImagePtr = NULL;
-    mFrameCaptureThreadPtr = NULL;
-    mMutexPtr = NULL;
+    mframeBufferImagePtr = nullptr;
+    mFrameCaptureThreadPtr = nullptr;
+    mMutexPtr = nullptr;
 }
 
 sgct_core::ScreenCapture::ScreenCapture()
@@ -41,7 +41,7 @@ sgct_core::ScreenCapture::ScreenCapture()
     mFormat = PNG;
     mBytesPerColor = 1;
 
-    mSCTIPtrs = NULL;
+    mSCTIPtrs = nullptr;
 }
 
 sgct_core::ScreenCapture::~ScreenCapture()
@@ -51,27 +51,27 @@ sgct_core::ScreenCapture::~ScreenCapture()
     mCaptureCallbackFn1 = SGCT_NULL_PTR;
     mCaptureCallbackFn2 = SGCT_NULL_PTR;
     
-    if( mSCTIPtrs != NULL )
+    if( mSCTIPtrs != nullptr )
     {
         for(unsigned int i=0; i<mNumberOfThreads; i++)
         {
             //kill threads that are still running
-            if( mSCTIPtrs[i].mFrameCaptureThreadPtr != NULL )
+            if( mSCTIPtrs[i].mFrameCaptureThreadPtr != nullptr )
             {
                 mSCTIPtrs[i].mFrameCaptureThreadPtr->join();
                 delete mSCTIPtrs[i].mFrameCaptureThreadPtr;
-                mSCTIPtrs[i].mFrameCaptureThreadPtr = NULL;
+                mSCTIPtrs[i].mFrameCaptureThreadPtr = nullptr;
             }
 
             #ifdef __SGCT_MUTEX_DEBUG__
                 fprintf(stderr, "Locking mutex for screencapture...\n");
             #endif
             mMutex.lock();
-            if( mSCTIPtrs[i].mframeBufferImagePtr != NULL )
+            if( mSCTIPtrs[i].mframeBufferImagePtr != nullptr )
             {
                 sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "\tBuffer %d...\n", i);
                 delete mSCTIPtrs[i].mframeBufferImagePtr;
-                mSCTIPtrs[i].mframeBufferImagePtr = NULL;
+                mSCTIPtrs[i].mframeBufferImagePtr = nullptr;
             }
 
             mSCTIPtrs[i].mRunning = false;
@@ -82,7 +82,7 @@ sgct_core::ScreenCapture::~ScreenCapture()
         }
 
         delete [] mSCTIPtrs;
-        mSCTIPtrs = NULL;
+        mSCTIPtrs = nullptr;
     }
 
     if( mPBO ) //delete if buffer exitsts
@@ -124,20 +124,20 @@ void sgct_core::ScreenCapture::initOrResize(int x, int y, int channels, int byte
     mMutex.lock();
     for(unsigned int i=0; i<mNumberOfThreads; i++)
     {
-        if( mSCTIPtrs[i].mframeBufferImagePtr != NULL )
+        if( mSCTIPtrs[i].mframeBufferImagePtr != nullptr )
         {
             sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Clearing screen capture buffer %d...\n", i);
 
             //kill threads that are still running
-            if( mSCTIPtrs[i].mFrameCaptureThreadPtr != NULL )
+            if( mSCTIPtrs[i].mFrameCaptureThreadPtr != nullptr )
             {
                 mSCTIPtrs[i].mFrameCaptureThreadPtr->join();
                 delete mSCTIPtrs[i].mFrameCaptureThreadPtr;
-                mSCTIPtrs[i].mFrameCaptureThreadPtr = NULL;
+                mSCTIPtrs[i].mFrameCaptureThreadPtr = nullptr;
             }
 
             delete mSCTIPtrs[i].mframeBufferImagePtr;
-            mSCTIPtrs[i].mframeBufferImagePtr = NULL;
+            mSCTIPtrs[i].mframeBufferImagePtr = nullptr;
         }
 
         mSCTIPtrs[i].mRunning = false;
@@ -150,7 +150,7 @@ void sgct_core::ScreenCapture::initOrResize(int x, int y, int channels, int byte
 
         glBindBuffer(GL_PIXEL_PACK_BUFFER, mPBO);
         //glBufferData(GL_PIXEL_PACK_BUFFER, mDataSize, 0, GL_STREAM_READ); //work but might cause incomplete buffer images
-        glBufferData(GL_PIXEL_PACK_BUFFER, mDataSize, 0, GL_STATIC_READ);
+        glBufferData(GL_PIXEL_PACK_BUFFER, mDataSize, nullptr, GL_STATIC_READ);
 
         //unbind
         glBindBuffer(GL_PIXEL_PACK_BUFFER, 0);
@@ -222,19 +222,19 @@ void sgct_core::ScreenCapture::saveScreenCapture(unsigned int textureId, CaputeS
         if (CapSrc == CAPTURE_TEXTURE)
         {
             glBindTexture(GL_TEXTURE_2D, textureId);
-            glGetTexImage(GL_TEXTURE_2D, 0, mDownloadFormat, mDownloadType, 0);
+            glGetTexImage(GL_TEXTURE_2D, 0, mDownloadFormat, mDownloadType, nullptr);
         }
         else
         {
             // set the target framebuffer to read
             glReadBuffer(CapSrc);
-            glReadPixels(0, 0, static_cast<GLsizei>(imPtr->getWidth()), static_cast<GLsizei>(imPtr->getHeight()), mDownloadFormat, mDownloadType, 0);
+            glReadPixels(0, 0, static_cast<GLsizei>(imPtr->getWidth()), static_cast<GLsizei>(imPtr->getHeight()), mDownloadFormat, mDownloadType, nullptr);
         }
             
         if (sgct::Engine::instance()->isOGLPipelineFixed())
             glPopAttrib();
         
-        GLubyte * ptr = reinterpret_cast<GLubyte*>(glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY));
+        auto * ptr = reinterpret_cast<GLubyte*>(glMapBuffer(GL_PIXEL_PACK_BUFFER, GL_READ_ONLY));
         if (ptr)
         {
             if (mCaptureCallbackFn2 != SGCT_NULL_PTR)
@@ -408,7 +408,7 @@ int sgct_core::ScreenCapture::getAvailibleCaptureThread()
         for(unsigned int i=0; i<mNumberOfThreads; i++)
         {
             //check if thread is dead
-            if( mSCTIPtrs[i].mFrameCaptureThreadPtr == NULL )
+            if( mSCTIPtrs[i].mFrameCaptureThreadPtr == nullptr )
             {
                 return i;
             }
@@ -429,7 +429,7 @@ int sgct_core::ScreenCapture::getAvailibleCaptureThread()
                 {
                     mSCTIPtrs[i].mFrameCaptureThreadPtr->join();
                     delete mSCTIPtrs[i].mFrameCaptureThreadPtr;
-                    mSCTIPtrs[i].mFrameCaptureThreadPtr = NULL;
+                    mSCTIPtrs[i].mFrameCaptureThreadPtr = nullptr;
 
                     return i;
                 }
@@ -492,13 +492,13 @@ sgct_core::Image * sgct_core::ScreenCapture::prepareImage(int index)
     if (index == -1)
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Error in finding availible thread for screenshot/capture!\n");
-        return NULL;
+        return nullptr;
     }
     else
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "Starting thread for screenshot/capture [%d]\n", index);
 
     Image ** imPtr = &mSCTIPtrs[index].mframeBufferImagePtr;
-    if ((*imPtr) == NULL)
+    if ((*imPtr) == nullptr)
     {
         (*imPtr) = new sgct_core::Image();
         (*imPtr)->setBytesPerChannel(mBytesPerColor);
@@ -508,7 +508,7 @@ sgct_core::Image * sgct_core::ScreenCapture::prepareImage(int index)
         if (!(*imPtr)->allocateOrResizeData())
         {
             delete (*imPtr);
-            return NULL;
+            return nullptr;
         }
     }
     (*imPtr)->setFilename(mFilename);
@@ -519,7 +519,7 @@ sgct_core::Image * sgct_core::ScreenCapture::prepareImage(int index)
 //multi-threaded screenshot saver
 void screenCaptureHandler(void *arg)
 {
-    sgct_core::ScreenCaptureThreadInfo * ptr = reinterpret_cast<sgct_core::ScreenCaptureThreadInfo *>(arg);
+    auto * ptr = reinterpret_cast<sgct_core::ScreenCaptureThreadInfo *>(arg);
 
     if( !ptr->mframeBufferImagePtr->save() )
     {

@@ -19,7 +19,7 @@ void sgct_core::SGCTProjectionPlane::configure(tinyxml2::XMLElement * element)
     std::size_t i = 0;
     
     tinyxml2::XMLElement * subElement = element->FirstChildElement();
-    while (subElement != NULL)
+    while (subElement != nullptr)
     {
         val = subElement->Value();
 

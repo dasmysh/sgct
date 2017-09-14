@@ -21,11 +21,11 @@ class Shader
 {
 public:
     /*! Enum for deciding shader type */
-    typedef int ShaderType;
+    using ShaderType = int;
 
     Shader();
     Shader( ShaderType shaderType );
-    ~Shader(void);
+    ~Shader();
 
     void setShaderType( ShaderType shaderType );
     bool setSourceFromFile( const std::string & file );

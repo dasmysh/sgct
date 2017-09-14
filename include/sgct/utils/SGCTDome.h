@@ -21,20 +21,20 @@ class SGCTDome
 {
 public:
     SGCTDome(float radius, float FOV, unsigned int azimuthSteps, unsigned int elevationSteps);
+
+    SGCTDome(const SGCTDome & dome) = delete;
+    const SGCTDome & operator=(const SGCTDome & dome) = delete;
+
     ~SGCTDome();
     void draw();
 
 private:
     void init(float radius, float FOV, unsigned int azimuthSteps, unsigned int elevationSteps);
-    // Don't implement these, should give compile warning if used
-    SGCTDome();
-    SGCTDome( const SGCTDome & dome );
-    const SGCTDome & operator=(const SGCTDome & dome );
 
     void drawVBO();
     void drawVAO();
 
-    typedef void (SGCTDome::*InternalCallbackFn)(void);
+    using InternalCallbackFn = void(SGCTDome::*)();
     InternalCallbackFn    mInternalDrawFn;
 
     void createVBO();

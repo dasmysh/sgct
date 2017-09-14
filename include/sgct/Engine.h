@@ -175,15 +175,15 @@ public:
     void stopTimer(std::size_t id);
 
     //set callback functions
-    void setInitOGLFunction( void(*fnPtr)(void) );
-    void setPreWindowFunction( void(*fnPtr)(void) );
-    void setPreSyncFunction( void(*fnPtr)(void) );
-    void setPostSyncPreDrawFunction( void(*fnPtr)(void) );
-    void setClearBufferFunction( void(*fnPtr)(void) );
-    void setDrawFunction( void(*fnPtr)(void) );
-    void setDraw2DFunction( void(*fnPtr)(void) );
-    void setPostDrawFunction( void(*fnPtr)(void) );
-    void setCleanUpFunction( void(*fnPtr)(void) );
+    void setInitOGLFunction( void(*fnPtr)() );
+    void setPreWindowFunction( void(*fnPtr)() );
+    void setPreSyncFunction( void(*fnPtr)() );
+    void setPostSyncPreDrawFunction( void(*fnPtr)() );
+    void setClearBufferFunction( void(*fnPtr)() );
+    void setDrawFunction( void(*fnPtr)() );
+    void setDraw2DFunction( void(*fnPtr)() );
+    void setPostDrawFunction( void(*fnPtr)() );
+    void setCleanUpFunction( void(*fnPtr)() );
     
     void setKeyboardCallbackFunction( void(*fnPtr)(int, int) ); //arguments: int key, int action
     void setKeyboardCallbackFunction( void(*fnPtr)(int, int, int, int) ); //arguments: int key, int scancode, int action, int mods
@@ -436,16 +436,16 @@ private:
 private:
     static Engine * mInstance;
 
-    // Convinience typedef
+    // Convenience typedef
 #ifdef __LOAD_CPP11_FUN__
-    typedef sgct_cppxeleven::function<void()> CallbackFn;
-    typedef sgct_cppxeleven::function<void(void *, int, int, int)> DataTransferDecodeCallbackFn;
-    typedef sgct_cppxeleven::function<void(bool, int)> DataTransferStatusCallbackFn;
-    typedef sgct_cppxeleven::function<void(int, int)> DataTransferAcknowledgeCallbackFn;
-    typedef sgct_cppxeleven::function<void(const char *, int)> ExternalDecodeCallbackFn;
-    typedef sgct_cppxeleven::function<void(bool)> ExternalStatusCallbackFn;
-    typedef sgct_cppxeleven::function<void(sgct_core::Image*, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type)> ScreenShotFn1;
-    typedef sgct_cppxeleven::function<void(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type)> ScreenShotFn2;
+    using CallbackFn = sgct_cppxeleven::function<void()>;
+    using DataTransferDecodeCallbackFn = sgct_cppxeleven::function<void(void *, int, int, int)>;
+    using DataTransferStatusCallbackFn = sgct_cppxeleven::function<void(bool, int)>;
+    using DataTransferAcknowledgeCallbackFn = sgct_cppxeleven::function<void(int, int)>;
+    using ExternalDecodeCallbackFn = sgct_cppxeleven::function<void(const char *, int)>;
+    using ExternalStatusCallbackFn = sgct_cppxeleven::function<void(bool)>;
+    using ScreenShotFn1 = sgct_cppxeleven::function<void(sgct_core::Image*, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type)>;
+    using ScreenShotFn2 = sgct_cppxeleven::function<void(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type)>;
     typedef sgct_cppxeleven::function<void(GLFWwindow*)> ContextCreationFn;
 #else
     typedef void(*CallbackFn)(void);
@@ -459,9 +459,9 @@ private:
     typedef void(*ContextCreationFn)(GLFWwindow*);
 #endif
 
-    typedef void (Engine::*InternalCallbackFn)(void);
-    typedef void (Engine::*InternalCallbackTexArgFn)(TextureIndexes);
-    typedef void (*timerCallbackFn)(std::size_t);
+    using InternalCallbackFn = void (Engine::*)();
+    using InternalCallbackTexArgFn = void (Engine::*)(TextureIndexes);
+    using timerCallbackFn = void (*)(std::size_t);
 
     //function pointers
     CallbackFn mDrawFnPtr;

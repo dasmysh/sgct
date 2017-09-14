@@ -192,8 +192,8 @@ void sgct_core::Statistics::initVBO(bool fixedPipeline)
             glGenVertexArrays(1, &mStaticVAO);
 
             sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "Statistics: Generating VAOs:\n");
-            for(unsigned int i=0; i<2; i++)
-                sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "\t%d\n", mDynamicVAO[i]);
+            for(unsigned int i : mDynamicVAO)
+                sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "\t%d\n", i);
             sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "\t%d\n\n", mStaticVAO);
         }
 
@@ -201,8 +201,8 @@ void sgct_core::Statistics::initVBO(bool fixedPipeline)
         glGenBuffers(1, &mStaticVBO);
 
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "Statistics: Generating VBOs:\n");
-        for(unsigned int i=0; i<2; i++)
-            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "\t%d\n", mDynamicVBO[i]);
+        for(unsigned int i : mDynamicVBO)
+            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "\t%d\n", i);
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "\t%d\n\n", mStaticVBO);
     
         //double buffered VBOs
@@ -217,7 +217,7 @@ void sgct_core::Statistics::initVBO(bool fixedPipeline)
             glBufferData(GL_ARRAY_BUFFER, STATS_HISTORY_LENGTH * sizeof(StatsVertex) * STATS_NUMBER_OF_DYNAMIC_OBJS, &mDynamicVertexList[0], GL_STREAM_DRAW);
     
             if(!mFixedPipeline)
-                glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, 0, NULL );
+                glVertexAttribPointer( 0, 2, GL_FLOAT, GL_FALSE, 0, nullptr );
         }
 
         if(!mFixedPipeline)
@@ -406,7 +406,7 @@ void sgct_core::Statistics::draw(float lineWidth)
         glLoadIdentity();
         glPushMatrix();
         
-        double size = static_cast<double>(STATS_HISTORY_LENGTH);
+        auto size = static_cast<double>(STATS_HISTORY_LENGTH);
         glOrtho(0.0, size, 0.0, size, -1.0, 1.0);
 
         glMatrixMode(GL_MODELVIEW);
@@ -510,7 +510,7 @@ void sgct_core::Statistics::draw(float lineWidth)
         //gives an opengl error in mac os x (intel iris)
         glLineWidth( lineWidth );
         
-        float size = static_cast<float>(STATS_HISTORY_LENGTH);
+        auto size = static_cast<float>(STATS_HISTORY_LENGTH);
         
         glm::mat4 orthoMat = glm::ortho( 0.0f, size, 0.0f, size );
         orthoMat = glm::translate( orthoMat, glm::vec3(0.0f, size/4.0f, 0.0f) );

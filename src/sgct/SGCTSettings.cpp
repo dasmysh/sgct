@@ -11,7 +11,7 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <sgct/ogl_headers.h>
 #include <string.h>
 
-sgct::SGCTSettings * sgct::SGCTSettings::mInstance = NULL;
+sgct::SGCTSettings * sgct::SGCTSettings::mInstance = nullptr;
 
 sgct::SGCTSettings::SGCTSettings()
 {
@@ -45,8 +45,8 @@ sgct::SGCTSettings::SGCTSettings()
 
     mDefaultNumberOfAASamples = 1;
 
-    for(size_t i=0; i<3; i++)
-        mCapturePath[i].assign("SGCT");
+    for(auto & path : mCapturePath)
+        path.assign("SGCT");
     mCaptureFormat = sgct_core::ScreenCapture::NOT_SET;
 
     mCurrentDrawBuffer = Diffuse;
@@ -73,28 +73,28 @@ void sgct::SGCTSettings::configure(tinyxml2::XMLElement * element)
     const char * val;
     tinyxml2::XMLElement * subElement = element->FirstChildElement();
 
-    while (subElement != NULL)
+    while (subElement != nullptr)
     {
         val = subElement->Value();
 
         if (strcmp("DepthBufferTexture", val) == 0)
         {
-            if (subElement->Attribute("value") != NULL)
+            if (subElement->Attribute("value") != nullptr)
                 sgct::SGCTSettings::instance()->setUseDepthTexture(strcmp(subElement->Attribute("value"), "true") == 0 ? true : false);
         }
         else if (strcmp("NormalTexture", val) == 0)
         {
-            if (subElement->Attribute("value") != NULL)
+            if (subElement->Attribute("value") != nullptr)
                 sgct::SGCTSettings::instance()->setUseNormalTexture(strcmp(subElement->Attribute("value"), "true") == 0 ? true : false);
         }
         else if (strcmp("PositionTexture", val) == 0)
         {
-            if (subElement->Attribute("value") != NULL)
+            if (subElement->Attribute("value") != nullptr)
                 sgct::SGCTSettings::instance()->setUsePositionTexture(strcmp(subElement->Attribute("value"), "true") == 0 ? true : false);
         }
         else if (strcmp("PBO", val) == 0)
         {
-            if (subElement->Attribute("value") != NULL)
+            if (subElement->Attribute("value") != nullptr)
                 sgct::SGCTSettings::instance()->setUsePBO(strcmp(subElement->Attribute("value"), "true") == 0 ? true : false);
         }
         else if (strcmp("Precision", val) == 0)
@@ -128,10 +128,10 @@ void sgct::SGCTSettings::configure(tinyxml2::XMLElement * element)
                 sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "ReadConfig: Display refresh rate hint is set to %d Hz.\n", rate);
             }
 
-            if (subElement->Attribute("tryMaintainAspectRatio") != NULL)
+            if (subElement->Attribute("tryMaintainAspectRatio") != nullptr)
                 sgct::SGCTSettings::instance()->setTryMaintainAspectRatio(strcmp(subElement->Attribute("tryMaintainAspectRatio"), "true") == 0 ? true : false);
 
-            if (subElement->Attribute("exportWarpingMeshes") != NULL)
+            if (subElement->Attribute("exportWarpingMeshes") != nullptr)
                 sgct::SGCTSettings::instance()->setExportWarpingMeshes(strcmp(subElement->Attribute("exportWarpingMeshes"), "true") == 0 ? true : false);
         }
         else if (strcmp("OSDText", val) == 0)
@@ -139,21 +139,21 @@ void sgct::SGCTSettings::configure(tinyxml2::XMLElement * element)
             float x = 0.0f;
             float y = 0.0f;
 
-            if (subElement->Attribute("name") != NULL)
+            if (subElement->Attribute("name") != nullptr)
             {
                 sgct::SGCTSettings::instance()->setOSDTextFontName(subElement->Attribute("name"));
                 sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG,
                     "ReadConfig: Setting font name to %s\n", subElement->Attribute("name"));
             }
 
-            if (subElement->Attribute("path") != NULL)
+            if (subElement->Attribute("path") != nullptr)
             {
                 sgct::SGCTSettings::instance()->setOSDTextFontPath(subElement->Attribute("path"));
                 sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG,
                     "ReadConfig: Setting font path to %s\n", subElement->Attribute("path"));
             }
 
-            if (subElement->Attribute("size") != NULL)
+            if (subElement->Attribute("size") != nullptr)
             {
                 unsigned int tmpi;
                 if (subElement->QueryUnsignedAttribute("size", &tmpi) == tinyxml2::XML_NO_ERROR && tmpi > 0)

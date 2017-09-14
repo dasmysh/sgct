@@ -47,7 +47,7 @@ struct my_error_mgr
     jmp_buf setjmp_buffer;    /* for return to caller */
 };
 
-typedef struct my_error_mgr * my_error_ptr;
+using my_error_ptr = struct my_error_mgr *;
 
 /*
 * Here's the routine that will replace the standard error_exit method:
@@ -56,7 +56,7 @@ typedef struct my_error_mgr * my_error_ptr;
 METHODDEF(void) my_error_exit(j_common_ptr cinfo)
 {
     /* cinfo->err really points to a my_error_mgr struct, so coerce pointer */
-    my_error_ptr myerr = (my_error_ptr)cinfo->err;
+    auto myerr = (my_error_ptr)cinfo->err;
 
     /* Always display the message. */
     /* We could postpone this until after returning, if we chose. */
@@ -75,20 +75,20 @@ void readPNGFromBuffer(png_structp png_ptr, png_bytep outData, png_size_t length
     }
         
     /* The file 'handle', a pointer, is stored in png_ptr->io_ptr */
-    if ( png_ptr->io_ptr == NULL )
+    if ( png_ptr->io_ptr == nullptr )
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image: PNG reading error! Invalid source pointer.");
         return;
     }
     
-    if ( outData == NULL )
+    if ( outData == nullptr )
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image: PNG reading error! Invalid destination pointer.");
         return;
     }
             
     //copy buffer
-    PNG_IO_DATA * ioPtr = reinterpret_cast<PNG_IO_DATA*>(png_ptr->io_ptr);
+    auto * ioPtr = reinterpret_cast<PNG_IO_DATA*>(png_ptr->io_ptr);
     memcpy(outData, ioPtr->data + ioPtr->memOffset, length);
     ioPtr->memOffset += length;
 
@@ -97,8 +97,8 @@ void readPNGFromBuffer(png_structp png_ptr, png_bytep outData, png_size_t length
 
 sgct_core::Image::Image()
 {
-    mData = NULL;
-    mRowPtrs = NULL;
+    mData = nullptr;
+    mRowPtrs = nullptr;
     
     mBytesPerChannel = 1;
     mChannels = 0;
@@ -257,7 +257,7 @@ bool sgct_core::Image::loadJPEG(std::string filename)
     
     struct my_error_mgr jerr;
     struct jpeg_decompress_struct cinfo;
-    FILE * fp = NULL;
+    FILE * fp = nullptr;
     JSAMPARRAY buffer;
     std::size_t row_stride;
 
@@ -341,7 +341,7 @@ bool sgct_core::Image::loadJPEG(std::string filename)
  */
 bool sgct_core::Image::loadJPEG(unsigned char * data, std::size_t len)
 {
-    if(data == NULL || len <= 0)
+    if(data == nullptr || len <= 0)
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image: failed to load JPEG from memory. Invalid input data.");
         return false;
@@ -408,7 +408,7 @@ bool sgct_core::Image::loadJPEG(unsigned char * data, std::size_t len)
         tjDestroy(turbo_jpeg_handle);
         
         delete [] mData;
-        mData = NULL;
+        mData = nullptr;
         
         return false;
     }
@@ -433,7 +433,7 @@ bool sgct_core::Image::loadPNG(std::string filename)
     unsigned char header[PNG_BYTES_TO_CHECK];
     int color_type, bpp;
 
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
     #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&fp, mFilename.c_str(), "rbS") != 0 || !fp)
     {
@@ -457,8 +457,8 @@ bool sgct_core::Image::loadPNG(std::string filename)
         return false;
     }
 
-    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
-    if( png_ptr == NULL )
+    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr );
+    if( png_ptr == nullptr )
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Can't initialize PNG file for reading: %s\n", mFilename.c_str());
         fclose(fp);
@@ -466,17 +466,17 @@ bool sgct_core::Image::loadPNG(std::string filename)
     }
 
     info_ptr = png_create_info_struct(png_ptr);
-    if( info_ptr == NULL )
+    if( info_ptr == nullptr )
     {
         fclose(fp);
-        png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+        png_destroy_read_struct(&png_ptr, (png_infopp)nullptr, (png_infopp)nullptr);
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Can't allocate memory to read PNG file: %s\n", mFilename.c_str());
         return false;
     }
 
     if( setjmp(png_jmpbuf(png_ptr)) )
     {
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)nullptr);
         fclose(fp);
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Exception occurred while reading PNG file: %s\n", mFilename.c_str());
         return false;
@@ -486,7 +486,7 @@ bool sgct_core::Image::loadPNG(std::string filename)
     png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
     png_read_info(png_ptr, info_ptr);
     
-    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&mSize_x, (png_uint_32 *)&mSize_y, &bpp, &color_type, NULL, NULL, NULL);
+    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&mSize_x, (png_uint_32 *)&mSize_y, &bpp, &color_type, nullptr, nullptr, nullptr);
     
     //set options
     if(mPreferBGRForImport)
@@ -536,10 +536,10 @@ bool sgct_core::Image::loadPNG(std::string filename)
     for (std::size_t i = 0; i < mSize_y; i++)
     {
         pos -= mSize_x * mChannels;
-        png_read_row(png_ptr, &mData[pos], NULL);
+        png_read_row(png_ptr, &mData[pos], nullptr);
     }
 
-    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)nullptr);
     fclose(fp);
 
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Image: Loaded %s (%dx%d %d-bit).\n", mFilename.c_str(), mSize_x, mSize_y, mBytesPerChannel * 8);
@@ -549,7 +549,7 @@ bool sgct_core::Image::loadPNG(std::string filename)
 
 bool sgct_core::Image::loadPNG(unsigned char * data, std::size_t len)
 {
-    if(data == NULL || len <= PNG_BYTES_TO_CHECK)
+    if(data == nullptr || len <= PNG_BYTES_TO_CHECK)
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image: failed to load PNG from memory. Invalid input data.");
         return false;
@@ -568,17 +568,17 @@ bool sgct_core::Image::loadPNG(unsigned char * data, std::size_t len)
         return false;
     }
     
-    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, NULL, NULL, NULL );
-    if( png_ptr == NULL )
+    png_ptr = png_create_read_struct( PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr );
+    if( png_ptr == nullptr )
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Can't initialize PNG.\n");
         return false;
     }
     
     info_ptr = png_create_info_struct(png_ptr);
-    if( info_ptr == NULL )
+    if( info_ptr == nullptr )
     {
-        png_destroy_read_struct(&png_ptr, (png_infopp)NULL, (png_infopp)NULL);
+        png_destroy_read_struct(&png_ptr, (png_infopp)nullptr, (png_infopp)nullptr);
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Can't allocate memory to read PNG data.\n");
         return false;
     }
@@ -591,7 +591,7 @@ bool sgct_core::Image::loadPNG(unsigned char * data, std::size_t len)
     
     if( setjmp(png_jmpbuf(png_ptr)) )
     {
-        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+        png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)nullptr);
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Exception occurred while reading PNG data.\n");
         return false;
     }
@@ -599,7 +599,7 @@ bool sgct_core::Image::loadPNG(unsigned char * data, std::size_t len)
     png_set_sig_bytes(png_ptr, PNG_BYTES_TO_CHECK);
     png_read_info(png_ptr, info_ptr);
     
-    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&mSize_x, (png_uint_32 *)&mSize_y, &bpp, &color_type, NULL, NULL, NULL);
+    png_get_IHDR(png_ptr, info_ptr, (png_uint_32 *)&mSize_x, (png_uint_32 *)&mSize_y, &bpp, &color_type, nullptr, nullptr, nullptr);
     
     //set options
     if(mPreferBGRForImport)
@@ -647,10 +647,10 @@ bool sgct_core::Image::loadPNG(unsigned char * data, std::size_t len)
     for (std::size_t i = 0; i < mSize_y; i++)
     {
         pos -= mSize_x * mChannels;
-        png_read_row(png_ptr, &mData[pos], NULL);
+        png_read_row(png_ptr, &mData[pos], nullptr);
     }
 
-    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)NULL);
+    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp)nullptr);
     
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Image: Loaded %dx%d %d-bit PNG from memory.\n", mSize_x, mSize_y, mBytesPerChannel*8);
     
@@ -668,7 +668,7 @@ bool sgct_core::Image::loadTGA(std::string filename)
 
     unsigned char header[TGA_BYTES_TO_CHECK];
 
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&fp, mFilename.c_str(), "rbS") != 0 || !fp)
     {
@@ -734,7 +734,7 @@ bool sgct_core::Image::loadTGA(std::string filename)
 
 bool sgct_core::Image::loadTGA(unsigned char * data, std::size_t len)
 {
-    if (data == NULL || len <= TGA_BYTES_TO_CHECK)
+    if (data == nullptr || len <= TGA_BYTES_TO_CHECK)
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image: failed to load TGA from memory. Invalid input data.");
         return false;
@@ -966,7 +966,7 @@ bool sgct_core::Image::savePNG(std::string filename, int compressionLevel)
 
 bool sgct_core::Image::savePNG(int compressionLevel)
 {
-    if( mData == NULL )
+    if( mData == nullptr )
         return false;
 
     if (mBytesPerChannel > 2)
@@ -977,7 +977,7 @@ bool sgct_core::Image::savePNG(int compressionLevel)
 
     double t0 = sgct::Engine::getTime();
     
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
     #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if( fopen_s( &fp, mFilename.c_str(), "wb") != 0 || !fp )
     {
@@ -994,7 +994,7 @@ bool sgct_core::Image::savePNG(int compressionLevel)
     #endif
 
     /* initialize stuff */
-    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+    png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
     if (!png_ptr)
         return false;
 
@@ -1074,7 +1074,7 @@ bool sgct_core::Image::savePNG(int compressionLevel)
     if (setjmp(png_jmpbuf(png_ptr)))
         return false;
 
-    png_write_end(png_ptr, NULL);
+    png_write_end(png_ptr, nullptr);
 
     png_destroy_write_struct (&png_ptr, &info_ptr);
 
@@ -1087,7 +1087,7 @@ bool sgct_core::Image::savePNG(int compressionLevel)
 
 bool sgct_core::Image::saveJPEG(int quality)
 {
-    if (mData == NULL)
+    if (mData == nullptr)
         return false;
 
     if (mBytesPerChannel > 1)
@@ -1098,7 +1098,7 @@ bool sgct_core::Image::saveJPEG(int quality)
 
     double t0 = sgct::Engine::getTime();
 
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&fp, mFilename.c_str(), "wb") != 0 || !fp)
     {
@@ -1179,7 +1179,7 @@ bool sgct_core::Image::saveJPEG(int quality)
 
 bool sgct_core::Image::saveTGA()
 {
-    if( mData == NULL )
+    if( mData == nullptr )
         return false;
 
     if (mBytesPerChannel > 1)
@@ -1190,7 +1190,7 @@ bool sgct_core::Image::saveTGA()
     
     double t0 = sgct::Engine::getTime();
 
-    FILE *fp = NULL;
+    FILE *fp = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&fp, mFilename.c_str(), "wb") != 0 || !fp)
     {
@@ -1416,14 +1416,14 @@ void sgct_core::Image::cleanup()
     if (!mExternalData && mData)
     {
         delete [] mData;
-        mData = NULL;
+        mData = nullptr;
         mDataSize = 0;
     }
 
     if(mRowPtrs)
     {
         delete [] mRowPtrs;
-        mRowPtrs = NULL;
+        mRowPtrs = nullptr;
     }
 }
 
@@ -1499,8 +1499,8 @@ void sgct_core::Image::setSampleAt(unsigned char val, std::size_t x, std::size_t
 */
 float sgct_core::Image::getInterpolatedSampleAt(float x, float y, sgct_core::Image::ChannelType c)
 {
-    int px = static_cast<int>(x); //floor x
-    int py = static_cast<int>(y); //floor y
+    auto px = static_cast<int>(x); //floor x
+    auto py = static_cast<int>(y); //floor y
     
     // Calculate the weights for each pixel
     float fx = x - static_cast<float>(px);
@@ -1518,10 +1518,10 @@ float sgct_core::Image::getInterpolatedSampleAt(float x, float y, sgct_core::Ima
     float w2 = fx1 * fy;
     float w3 = fx  * fy;
     
-    float p0 = static_cast<float>( getSampleAt(px, py, c) );
-    float p1 = static_cast<float>( getSampleAt(px, py+1, c) );
-    float p2 = static_cast<float>( getSampleAt(px+1, py, c) );
-    float p3 = static_cast<float>( getSampleAt(px+1, py+1, c) );
+    auto p0 = static_cast<float>( getSampleAt(px, py, c) );
+    auto p1 = static_cast<float>( getSampleAt(px, py+1, c) );
+    auto p2 = static_cast<float>( getSampleAt(px+1, py, c) );
+    auto p3 = static_cast<float>( getSampleAt(px+1, py+1, c) );
     
     return p0 * w0 + p1 * w1 + p2 * w2 + p3 * w3;
 }
@@ -1531,7 +1531,7 @@ void sgct_core::Image::setDataPtr(unsigned char * dPtr)
     if (!mExternalData && mData)
     {
         delete[] mData;
-        mData = NULL;
+        mData = nullptr;
         mDataSize = 0;
     }
 
@@ -1586,7 +1586,7 @@ bool sgct_core::Image::allocateOrResizeData()
         catch (std::bad_alloc& ba)
         {
             sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Failed to allocate %d bytes of image data (%s).\n", dataSize, ba.what());
-            mData = NULL;
+            mData = nullptr;
             mDataSize = 0;
             return false;
         }
@@ -1605,7 +1605,7 @@ bool sgct_core::Image::allocateRowPtrs()
     if (mRowPtrs)
     {
         delete[] mRowPtrs;
-        mRowPtrs = NULL;
+        mRowPtrs = nullptr;
     }
 
     try
@@ -1615,7 +1615,7 @@ bool sgct_core::Image::allocateRowPtrs()
     catch (std::bad_alloc& ba)
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Image error: Failed to allocate pointers for image data (%s).\n", ba.what());
-        mRowPtrs = NULL;
+        mRowPtrs = nullptr;
         return false;
     }
 

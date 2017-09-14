@@ -23,19 +23,18 @@ class SGCTPlane
 {
 public:
     SGCTPlane(float width, float height);
+
+    SGCTPlane(const SGCTPlane & box) = delete;
+    const SGCTPlane & operator=(const SGCTPlane & box) = delete;
+
     ~SGCTPlane();
     void draw();
 
 private:
-    // Don't implement these, should give compile warning if used
-    SGCTPlane();
-    SGCTPlane(const SGCTPlane & box);
-    const SGCTPlane & operator=(const SGCTPlane & box);
-
     void drawVBO();
     void drawVAO();
 
-    typedef void (SGCTPlane::*InternalCallbackFn)(void);
+    using InternalCallbackFn = void (SGCTPlane::*)();
     InternalCallbackFn    mInternalDrawFn;
 
     void cleanUp();

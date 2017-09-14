@@ -10,17 +10,11 @@ For conditions of distribution and use, see copyright notice in sgct.h
 
 //#define __SGCT_MUTEX_DEBUG__
 
-sgct::SGCTMutexManager * sgct::SGCTMutexManager::mInstance = NULL;
+sgct::SGCTMutexManager * sgct::SGCTMutexManager::mInstance = nullptr;
 
-sgct::SGCTMutexManager::SGCTMutexManager()
-{
+sgct::SGCTMutexManager::SGCTMutexManager() = default;
 
-}
-
-sgct::SGCTMutexManager::~SGCTMutexManager()
-{
-    
-}
+sgct::SGCTMutexManager::~SGCTMutexManager() = default;
 
 void sgct::SGCTMutexManager::lockMutex(sgct::SGCTMutexManager::MutexIndexes mi)
 {

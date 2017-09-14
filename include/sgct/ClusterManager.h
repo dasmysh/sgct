@@ -30,7 +30,7 @@ public:
     /*! Get the ClusterManager instance */
     static ClusterManager * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new ClusterManager();
         }
@@ -41,10 +41,10 @@ public:
     /*! Destroy the ClusterManager */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
@@ -132,8 +132,8 @@ public:
     inline sgct::SGCTTrackingManager * getTrackingManagerPtr() { return mTrackingManager; }
 
 private:
-    ClusterManager(void);
-    ~ClusterManager(void);
+    ClusterManager();
+    ~ClusterManager();
 
     // Don't implement these, should give compile warning if used
     ClusterManager( const ClusterManager & nm );

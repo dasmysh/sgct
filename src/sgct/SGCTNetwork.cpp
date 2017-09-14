@@ -54,10 +54,10 @@ For conditions of distribution and use, see copyright notice in sgct.h
 
 sgct_core::SGCTNetwork::SGCTNetwork()
 {
-    mCommThread        = NULL;
-    mMainThread        = NULL;
-    mRecvBuf        = NULL;
-    mUncompressBuf    = NULL;
+    mCommThread        = nullptr;
+    mMainThread        = nullptr;
+    mRecvBuf        = nullptr;
+    mUncompressBuf    = nullptr;
     mSocket            = INVALID_SOCKET;
     mListenSocket    = INVALID_SOCKET;
     
@@ -111,7 +111,7 @@ void sgct_core::SGCTNetwork::init(const std::string port, const std::string addr
     mPort.assign(port);
     mAddress.assign(address);
 
-    struct addrinfo *result = NULL, *ptr = NULL, hints;
+    struct addrinfo *result = nullptr, *ptr = nullptr, hints;
 #ifdef __WIN32__ //WinSock
     ZeroMemory(&hints, sizeof (hints));
 #else
@@ -126,7 +126,7 @@ void sgct_core::SGCTNetwork::init(const std::string port, const std::string addr
     int iResult;
 
     if( mServer )
-        iResult = getaddrinfo(NULL, port.c_str(), &hints, &result);
+        iResult = getaddrinfo(nullptr, port.c_str(), &hints, &result);
     else
         iResult = getaddrinfo(address.c_str(), port.c_str(), &hints, &result);
     if (iResult != 0)
@@ -211,7 +211,7 @@ void sgct_core::SGCTNetwork::init(const std::string port, const std::string addr
 
 void sgct_core::SGCTNetwork::connectionHandlerStarter(void *arg)
 {
-    sgct_core::SGCTNetwork * nPtr = (sgct_core::SGCTNetwork *)arg;
+    auto * nPtr = (sgct_core::SGCTNetwork *)arg;
 
     nPtr->connectionHandler();
 }
@@ -225,11 +225,11 @@ void sgct_core::SGCTNetwork::connectionHandler()
             if( !mConnected )
             {
                 //first time the thread is NULL so the wait will not run
-                if( mCommThread != NULL )
+                if( mCommThread != nullptr )
                 {
                     mCommThread->join();
                     delete mCommThread;
-                    mCommThread = NULL;
+                    mCommThread = nullptr;
                 }
 
                 //start a new connection enabling the client to reconnect
@@ -314,7 +314,7 @@ std::string sgct_core::SGCTNetwork::getTypeStr(sgct_core::SGCTNetwork::Connectio
 
 void sgct_core::SGCTNetwork::setOptions(SGCT_SOCKET * socketPtr)
 {
-    if(socketPtr != NULL)
+    if(socketPtr != nullptr)
     {
         int flag = 1;
         int iResult;
@@ -457,7 +457,7 @@ void sgct_core::SGCTNetwork::pushClientMessage()
 
     //The servers' render function is locked until a message starting with the ack-byte is received.
     int currentFrame = iterateFrameCounter();
-    unsigned char *p = (unsigned char *)&currentFrame;
+    auto *p = (unsigned char *)&currentFrame;
 
     if(sgct::MessageHandler::instance()->getDataSize() > mHeaderSize)
     {
@@ -480,7 +480,7 @@ void sgct_core::SGCTNetwork::pushClientMessage()
             static_cast<uint32_t>(sgct::MessageHandler::instance()->getDataSize());
 
         uint32_t dataSize = currentMessageSize - mHeaderSize;
-        unsigned char *currentMessageSizePtr = reinterpret_cast<unsigned char *>(&dataSize);
+        auto *currentMessageSizePtr = reinterpret_cast<unsigned char *>(&dataSize);
         messageToSend[5] = currentMessageSizePtr[0];
         messageToSend[6] = currentMessageSizePtr[1];
         messageToSend[7] = currentMessageSizePtr[2];
@@ -505,7 +505,7 @@ void sgct_core::SGCTNetwork::pushClientMessage()
         tmpca[4] = p[3];
 
         uint32_t localSyncHeaderSize = 0;
-        unsigned char *currentMessageSizePtr = (unsigned char *)&localSyncHeaderSize;
+        auto *currentMessageSizePtr = (unsigned char *)&localSyncHeaderSize;
         tmpca[5] = currentMessageSizePtr[0];
         tmpca[6] = currentMessageSizePtr[1];
         tmpca[7] = currentMessageSizePtr[2];
@@ -759,12 +759,12 @@ void sgct_core::SGCTNetwork::updateBuffer(char ** buffer, uint32_t requested_siz
         if (!(*buffer))
         {
             delete[] (*buffer);
-            (*buffer) = NULL;
+            (*buffer) = nullptr;
         }
 
         //allocate
         (*buffer) = new (std::nothrow) char[requested_size];
-        if ((*buffer) != NULL)
+        if ((*buffer) != nullptr)
         {
             current_size = requested_size;
         }
@@ -929,7 +929,7 @@ int sgct_core::SGCTNetwork::readExternalMessage()
 
 void sgct_core::SGCTNetwork::communicationHandlerStarter(void *arg)
 {
-    sgct_core::SGCTNetwork * nPtr = (sgct_core::SGCTNetwork *)arg;
+    auto * nPtr = (sgct_core::SGCTNetwork *)arg;
 
     nPtr->communicationHandler();
 }
@@ -948,7 +948,7 @@ void sgct_core::SGCTNetwork::communicationHandler()
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Waiting for client to connect to connection %d (port %s)...\n", mId, getPort().c_str());
 
-        mSocket = accept(mListenSocket, NULL, NULL);
+        mSocket = accept(mListenSocket, nullptr, nullptr);
 
         int accErr = SGCT_ERRNO;
 #ifdef __WIN32__
@@ -959,7 +959,7 @@ void sgct_core::SGCTNetwork::communicationHandler()
         {
             sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Re-accept after interrupted system on connection %d...\n", mId);
 
-            mSocket = accept(mListenSocket, NULL, NULL);
+            mSocket = accept(mListenSocket, nullptr, nullptr);
         }
 
         if (mSocket == INVALID_SOCKET)
@@ -1088,7 +1088,7 @@ void sgct_core::SGCTNetwork::communicationHandler()
                         if(dataSize > 0)
                         {
                             //parse the package id
-                            uLongf uncompressedSize = static_cast<uLongf>(uncompressedDataSize);
+                            auto uncompressedSize = static_cast<uLongf>(uncompressedDataSize);
     
                             int err = uncompress(
                                                  reinterpret_cast<Bytef*>(mUncompressBuf),
@@ -1262,7 +1262,7 @@ void sgct_core::SGCTNetwork::communicationHandler()
                         else //compressed
                         {
                             //parse the package id
-                            uLongf uncompressedSize = static_cast<uLongf>(uncompressedDataSize);
+                            auto uncompressedSize = static_cast<uLongf>(uncompressedDataSize);
                             
                             int err = uncompress(
                                                  reinterpret_cast<Bytef*>(mUncompressBuf),
@@ -1287,8 +1287,8 @@ void sgct_core::SGCTNetwork::communicationHandler()
                             //send acknowledge
                             char sendBuff[sgct_core::SGCTNetwork::mHeaderSize];
                             uint32_t pLenght = 0;
-                            char *packageIdPtr = reinterpret_cast<char *>(&packageId);
-                            char *sizeDataPtr = reinterpret_cast<char *>(&pLenght);
+                            auto *packageIdPtr = reinterpret_cast<char *>(&packageId);
+                            auto *sizeDataPtr = reinterpret_cast<char *>(&pLenght);
                             
                             sendBuff[0] = sgct_core::SGCTNetwork::Ack;
                             sendBuff[1] = packageIdPtr[0];
@@ -1308,12 +1308,12 @@ void sgct_core::SGCTNetwork::communicationHandler()
 
                         //clean up
                         delete[] mRecvBuf;
-                        mRecvBuf = NULL;
+                        mRecvBuf = nullptr;
                         
                         if (mUncompressBuf)
                         {
                             delete[] mUncompressBuf;
-                            mUncompressBuf = NULL;
+                            mUncompressBuf = nullptr;
                         }
 
                         mBufferSize = 0;
@@ -1371,16 +1371,16 @@ void sgct_core::SGCTNetwork::communicationHandler()
 
 
     //cleanup
-    if (mRecvBuf != NULL)
+    if (mRecvBuf != nullptr)
     {
         delete[] mRecvBuf;
-        mRecvBuf = NULL;
+        mRecvBuf = nullptr;
     }
     
-    if (mUncompressBuf != NULL)
+    if (mUncompressBuf != nullptr)
     {
         delete[] mUncompressBuf;
-        mUncompressBuf = NULL;
+        mUncompressBuf = nullptr;
     }
 
     //Close socket
@@ -1437,22 +1437,22 @@ void sgct_core::SGCTNetwork::closeNetwork(bool forced)
     NetworkManager::gCond.notify_all();
     mStartConnectionCond.notify_all();
 
-    if( mCommThread != NULL )
+    if( mCommThread != nullptr )
     {
         if( !forced )
             mCommThread->join();
 
         delete mCommThread; //blocking sockets -> cannot wait for thread so just kill it brutally
-        mCommThread = NULL;
+        mCommThread = nullptr;
     }
 
-    if( mMainThread != NULL )
+    if( mMainThread != nullptr )
     {
         if( !forced )
             mMainThread->join();
 
         delete mMainThread;
-        mMainThread = NULL;
+        mMainThread = nullptr;
     }
 
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO, "Connection %d successfully terminated.\n", mId);

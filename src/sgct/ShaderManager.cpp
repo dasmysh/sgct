@@ -12,13 +12,13 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <algorithm>
 
 // Initiate the manager to NULL
-sgct::ShaderManager * sgct::ShaderManager::mInstance = NULL;
+sgct::ShaderManager * sgct::ShaderManager::mInstance = nullptr;
 
 /*!
 Default constructor does nothing only sets the NULL value shader program
 that can be used for comparison will NULL value shader programs
 */
-sgct::ShaderManager::ShaderManager(void) :
+sgct::ShaderManager::ShaderManager() :
     NullShader( "SGCT_NULL" )
 {
     mCurrentBin = SHADER_BIN_0;
@@ -28,19 +28,19 @@ sgct::ShaderManager::ShaderManager(void) :
 /*!
 Destructor deallocates and deletes all shaders
 */
-sgct::ShaderManager::~ShaderManager(void)
+sgct::ShaderManager::~ShaderManager()
 {
-    for(unsigned int i=0; i < NUMBER_OF_SHADER_BINS; i++)
+    for(auto & mShaderProgram : mShaderPrograms)
     {
-        std::vector<ShaderProgram>::iterator it = mShaderPrograms[i].begin();
-        std::vector<ShaderProgram>::iterator end = mShaderPrograms[i].end();
+        auto it = mShaderProgram.begin();
+        auto end = mShaderProgram.end();
 
         for( ; it != end; ++it )
         {
             it->deleteProgram();
         }
 
-        mShaderPrograms[i].clear();
+        mShaderProgram.clear();
     }
 }
 //----------------------------------------------------------------------------//
@@ -339,7 +339,7 @@ Reloads a shader program from the manager for the current bin.
 */
 bool sgct::ShaderManager::reloadShaderProgram( const std::string & name )
 {
-    std::vector<ShaderProgram>::iterator shaderIt = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
+    auto shaderIt = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
 
     if( shaderIt == mShaderPrograms[mCurrentBin].end() )
     {
@@ -360,7 +360,7 @@ All resources allocated for the program will be deallocated and removed
 */
 bool sgct::ShaderManager::removeShaderProgram( const std::string & name )
 {
-    std::vector<ShaderProgram>::iterator shaderIt = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
+    auto shaderIt = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
 
     if( shaderIt == mShaderPrograms[mCurrentBin].end() )
     {
@@ -384,7 +384,7 @@ All resources allocated for the program will be deallocated and remved
 */
 bool sgct::ShaderManager::removeShaderProgram( const std::string & name, ShaderBinIndex bin )
 {
-    std::vector<ShaderProgram>::iterator shaderIt = std::find( mShaderPrograms[bin].begin(), mShaderPrograms[bin].end(), name );
+    auto shaderIt = std::find( mShaderPrograms[bin].begin(), mShaderPrograms[bin].end(), name );
 
     if( shaderIt == mShaderPrograms[bin].end() )
     {
@@ -454,7 +454,7 @@ can not be set as active or used in the rendering pipeline
 */
 const sgct::ShaderProgram & sgct::ShaderManager::getShaderProgram( const std::string & name ) const
 {
-    std::vector<ShaderProgram>::const_iterator shaderIt = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
+    auto shaderIt = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
 
     return (shaderIt != mShaderPrograms[mCurrentBin].end() ) ?
         *shaderIt :
@@ -469,7 +469,7 @@ Check if a shader program exists in the manager
 */
 bool sgct::ShaderManager::shaderProgramExists( const std::string & name ) const
 {
-    std::vector<ShaderProgram>::const_iterator exists = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
+    auto exists = std::find( mShaderPrograms[mCurrentBin].begin(), mShaderPrograms[mCurrentBin].end(), name );
 
     return exists != mShaderPrograms[mCurrentBin].end();
 }

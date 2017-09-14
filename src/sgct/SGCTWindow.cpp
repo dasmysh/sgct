@@ -37,8 +37,8 @@ GLXEWContext * glxewGetContext();
 bool sgct::SGCTWindow::mUseSwapGroups = false;
 bool sgct::SGCTWindow::mBarrier = false;
 bool sgct::SGCTWindow::mSwapGroupMaster = false;
-GLFWwindow * sgct::SGCTWindow::mCurrentContextOwner = NULL;
-GLFWwindow * sgct::SGCTWindow::mSharedHandle = NULL;
+GLFWwindow * sgct::SGCTWindow::mCurrentContextOwner = nullptr;
+GLFWwindow * sgct::SGCTWindow::mSharedHandle = nullptr;
 
 sgct::SGCTWindow::SGCTWindow(int id)
 {
@@ -62,7 +62,7 @@ sgct::SGCTWindow::SGCTWindow(int id)
 
     mBufferColorBitDepth = BufferColorBitDepth8;
     
-    mWindowHandle = NULL;
+    mWindowHandle = nullptr;
 
     mWindowRes[0] = 640;
     mWindowRes[1] = 480;
@@ -118,18 +118,18 @@ sgct::SGCTWindow::SGCTWindow(int id)
     mNumberOfAASamples = SGCTSettings::instance()->getDefaultNumberOfAASamples();
 
     //FBO targets init
-    for(int i=0; i<NUMBER_OF_TEXTURES; i++)
-        mFrameBufferTextures[i] = GL_FALSE;
+    for(unsigned int & mFrameBufferTexture : mFrameBufferTextures)
+        mFrameBufferTexture = GL_FALSE;
 
     //pointers
-    mMonitor = NULL;
-    mWindowHandle = NULL;
-    mSharedHandle = NULL;
-    mFinalFBO_Ptr = NULL;
-    mScreenCapture[0] = NULL;
-    mScreenCapture[1] = NULL;
+    mMonitor = nullptr;
+    mWindowHandle = nullptr;
+    mSharedHandle = nullptr;
+    mFinalFBO_Ptr = nullptr;
+    mScreenCapture[0] = nullptr;
+    mScreenCapture[1] = nullptr;
 
-    mCurrentViewport = NULL;
+    mCurrentViewport = nullptr;
     mHasAnyMasks = false;
     mUseRightEyeTexture = false;
 }
@@ -223,29 +223,29 @@ void sgct::SGCTWindow::close()
     mPostFXPasses.clear();
 
     MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Deleting screen capture data for window %d...\n", mId);
-    for (int i = 0; i < 2; i++)
-        if( mScreenCapture[i] )
+    for (auto & i : mScreenCapture)
+        if( i )
         {
-            delete mScreenCapture[i];
-            mScreenCapture[i] = NULL;
+            delete i;
+            i = nullptr;
         }
 
     //delete FBO stuff
-    if(mFinalFBO_Ptr != NULL &&
+    if(mFinalFBO_Ptr != nullptr &&
         SGCTSettings::instance()->useFBO() )
     {
         MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Releasing OpenGL buffers for window %d...\n", mId);
         mFinalFBO_Ptr->destroy();
 
         delete mFinalFBO_Ptr;
-        mFinalFBO_Ptr = NULL;
+        mFinalFBO_Ptr = nullptr;
 
-        for(unsigned int i=0; i<NUMBER_OF_TEXTURES; i++)
+        for(unsigned int & mFrameBufferTexture : mFrameBufferTextures)
         {
-            if( mFrameBufferTextures[i] != GL_FALSE )
+            if( mFrameBufferTexture != GL_FALSE )
             {
-                glDeleteTextures(1, &mFrameBufferTextures[i]);
-                mFrameBufferTextures[i] = GL_FALSE;
+                glDeleteTextures(1, &mFrameBufferTexture);
+                mFrameBufferTexture = GL_FALSE;
             }
         }
     }
@@ -339,17 +339,17 @@ void sgct::SGCTWindow::initOGL()
     initScreenCapture();
     loadShaders();
 
-    for (std::size_t i = 0; i < mViewports.size(); i++)
-        if (mViewports[i]->hasSubViewports())
+    for (auto & mViewport : mViewports)
+        if (mViewport->hasSubViewports())
         {
-            setCurrentViewport(mViewports[i]);
-            mViewports[i]->getNonLinearProjectionPtr()->setStereo(mStereoMode != No_Stereo);
-            mViewports[i]->getNonLinearProjectionPtr()->setPreferedMonoFrustumMode(mViewports[i]->getEye());
-            mViewports[i]->getNonLinearProjectionPtr()->init(mInternalColorFormat, mColorFormat, mColorDataType, mNumberOfAASamples);
+            setCurrentViewport(mViewport);
+            mViewport->getNonLinearProjectionPtr()->setStereo(mStereoMode != No_Stereo);
+            mViewport->getNonLinearProjectionPtr()->setPreferedMonoFrustumMode(mViewport->getEye());
+            mViewport->getNonLinearProjectionPtr()->init(mInternalColorFormat, mColorFormat, mColorDataType, mNumberOfAASamples);
             
-            float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * mViewports[i]->getXSize();
-            float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * mViewports[i]->getYSize();
-            mViewports[i]->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
+            float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * mViewport->getXSize();
+            float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * mViewport->getYSize();
+            mViewport->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
         }
 }
 
@@ -532,22 +532,22 @@ void sgct::SGCTWindow::swap(bool takeScreenshot)
         {
             if (sgct::SGCTSettings::instance()->getCaptureFromBackBuffer() && mDoubleBuffered)
             {
-                if (mScreenCapture[0] != NULL)
+                if (mScreenCapture[0] != nullptr)
                 {
                     mScreenCapture[0]->saveScreenCapture(0,
                         mStereoMode == Active_Stereo ? sgct_core::ScreenCapture::CAPTURE_LEFT_BACK_BUFFER : sgct_core::ScreenCapture::CAPTURE_BACK_BUFFER);
                 }
 
-                if (mScreenCapture[1] != NULL && mStereoMode == Active_Stereo)
+                if (mScreenCapture[1] != nullptr && mStereoMode == Active_Stereo)
                 {
                     mScreenCapture[0]->saveScreenCapture(0, sgct_core::ScreenCapture::CAPTURE_RIGHT_BACK_BUFFER);
                 }
             }
             else
             {
-                if (mScreenCapture[0] != NULL)
+                if (mScreenCapture[0] != nullptr)
                     mScreenCapture[0]->saveScreenCapture(mFrameBufferTextures[Engine::LeftEye]);
-                if (mScreenCapture[1] != NULL && mStereoMode > No_Stereo && mStereoMode < sgct::SGCTWindow::Side_By_Side_Stereo)
+                if (mScreenCapture[1] != nullptr && mStereoMode > No_Stereo && mStereoMode < sgct::SGCTWindow::Side_By_Side_Stereo)
                     mScreenCapture[1]->saveScreenCapture(mFrameBufferTextures[Engine::RightEye]);
             }
         }
@@ -594,29 +594,29 @@ bool sgct::SGCTWindow::update()
         resizeFBOs();
 
         //resize PBOs
-        for (int i = 0; i < 2; i++)
-            if (mScreenCapture[i] != NULL)
+        for (auto & i : mScreenCapture)
+            if (i != nullptr)
             {
                 int numberOfCaputeChannels = mAlpha ? 4 : 3;
                 if (sgct::SGCTSettings::instance()->getCaptureFromBackBuffer()) //capute from buffer supports only 8-bit per color component capture (unsigned byte)
                 {
-                    mScreenCapture[i]->setTextureTransferProperties(GL_UNSIGNED_BYTE, mPreferBGR);
-                    mScreenCapture[i]->initOrResize(getXResolution(), getYResolution(), numberOfCaputeChannels, 1);
+                    i->setTextureTransferProperties(GL_UNSIGNED_BYTE, mPreferBGR);
+                    i->initOrResize(getXResolution(), getYResolution(), numberOfCaputeChannels, 1);
                 }
                 else //default: capture from texture (supports HDR)
                 {
-                    mScreenCapture[i]->setTextureTransferProperties(mColorDataType, mPreferBGR);
-                    mScreenCapture[i]->initOrResize(getXFramebufferResolution(), getYFramebufferResolution(), numberOfCaputeChannels, mBytesPerColor);
+                    i->setTextureTransferProperties(mColorDataType, mPreferBGR);
+                    i->initOrResize(getXFramebufferResolution(), getYFramebufferResolution(), numberOfCaputeChannels, mBytesPerColor);
                 }
             }
 
         //resize non linear projection buffers
-        for (std::size_t i = 0; i < mViewports.size(); i++)
-            if (mViewports[i]->hasSubViewports())
+        for (auto & mViewport : mViewports)
+            if (mViewport->hasSubViewports())
             {
-                float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * mViewports[i]->getXSize();
-                float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * mViewports[i]->getYSize();
-                mViewports[i]->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
+                float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * mViewport->getXSize();
+                float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * mViewport->getYSize();
+                mViewport->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
             }
 
         return true;
@@ -812,7 +812,7 @@ void sgct::SGCTWindow::setUseFXAA(bool state)
     if( mUseFXAA )
         mUsePostFX = true;
     else
-        mUsePostFX = (mPostFXPasses.size() > 0);
+        mUsePostFX = (!mPostFXPasses.empty());
     MessageHandler::instance()->print( MessageHandler::NOTIFY_DEBUG, "FXAA status: %s for window %d\n", state ? "enabled" : "disabled", mId);
 }
 
@@ -902,9 +902,9 @@ bool sgct::SGCTWindow::openWindow(GLFWwindow* share)
 
     mWindowHandle = glfwCreateWindow(mWindowRes[0], mWindowRes[1], "SGCT", mMonitor, share);
 
-    if( mWindowHandle != NULL )
+    if( mWindowHandle != nullptr )
     {
-        if( share != NULL )
+        if( share != nullptr )
             mSharedHandle = share;
         else
             mSharedHandle = mWindowHandle;
@@ -1051,7 +1051,7 @@ void sgct::SGCTWindow::windowResizeCallback( GLFWwindow * window, int width, int
 {
     sgct_core::SGCTNode * thisNode = sgct_core::ClusterManager::instance()->getThisNodePtr();
 
-    if( thisNode != NULL )
+    if( thisNode != nullptr )
     {
         //find the correct window to update
         for(std::size_t i=0; i<thisNode->getNumberOfWindows(); i++)
@@ -1064,7 +1064,7 @@ void sgct::SGCTWindow::frameBufferResizeCallback( GLFWwindow * window, int width
 {
     sgct_core::SGCTNode * thisNode = sgct_core::ClusterManager::instance()->getThisNodePtr();
     
-    if( thisNode != NULL )
+    if( thisNode != nullptr )
     {
         //find the correct window to update
         for(std::size_t i=0; i<thisNode->getNumberOfWindows(); i++)
@@ -1077,7 +1077,7 @@ void sgct::SGCTWindow::windowFocusCallback( GLFWwindow * window, int state )
 {
     sgct_core::SGCTNode * thisNode = sgct_core::ClusterManager::instance()->getThisNodePtr();
 
-    if( thisNode != NULL )
+    if( thisNode != nullptr )
     {
         //find the correct window to update
         for(std::size_t i=0; i<thisNode->getNumberOfWindows(); i++)
@@ -1090,7 +1090,7 @@ void sgct::SGCTWindow::windowIconifyCallback( GLFWwindow * window, int state )
 {
     sgct_core::SGCTNode * thisNode = sgct_core::ClusterManager::instance()->getThisNodePtr();
 
-    if( thisNode != NULL )
+    if( thisNode != nullptr )
     {
         //find the correct window to update
         for(std::size_t i=0; i<thisNode->getNumberOfWindows(); i++)
@@ -1102,7 +1102,7 @@ void sgct::SGCTWindow::windowIconifyCallback( GLFWwindow * window, int state )
 void sgct::SGCTWindow::initScreenCapture()
 {
     for (int i = 0; i < 2; i++)
-    if (mScreenCapture[i] != NULL)
+    if (mScreenCapture[i] != nullptr)
     {
         //init PBO in screen capture
         if (i == 0)
@@ -1305,7 +1305,7 @@ void sgct::SGCTWindow::generateTexture(unsigned int id, const int xSize, const i
     {
         if (Engine::instance()->isOGLPipelineFixed() || SGCTSettings::instance()->getForceGlTexImage2D())
         {
-            glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, xSize, ySize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+            glTexImage2D( GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, xSize, ySize, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
         }
         else
         {
@@ -1319,7 +1319,7 @@ void sgct::SGCTWindow::generateTexture(unsigned int id, const int xSize, const i
     {
         if (Engine::instance()->isOGLPipelineFixed() || SGCTSettings::instance()->getForceGlTexImage2D())
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, sgct::SGCTSettings::instance()->getBufferFloatPrecisionAsGLint(), xSize, ySize, 0, GL_RGB, GL_FLOAT, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, sgct::SGCTSettings::instance()->getBufferFloatPrecisionAsGLint(), xSize, ySize, 0, GL_RGB, GL_FLOAT, nullptr);
         }
         else
         {
@@ -1333,7 +1333,7 @@ void sgct::SGCTWindow::generateTexture(unsigned int id, const int xSize, const i
     {
         if (Engine::instance()->isOGLPipelineFixed() || SGCTSettings::instance()->getForceGlTexImage2D())
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, sgct::SGCTSettings::instance()->getBufferFloatPrecisionAsGLint(), xSize, ySize, 0, GL_RGB, GL_FLOAT, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, sgct::SGCTSettings::instance()->getBufferFloatPrecisionAsGLint(), xSize, ySize, 0, GL_RGB, GL_FLOAT, nullptr);
         }
         else
         {
@@ -1347,7 +1347,7 @@ void sgct::SGCTWindow::generateTexture(unsigned int id, const int xSize, const i
     {
         if (Engine::instance()->isOGLPipelineFixed() || SGCTSettings::instance()->getForceGlTexImage2D())
         {
-            glTexImage2D(GL_TEXTURE_2D, 0, mInternalColorFormat, xSize, ySize, 0, mColorFormat, mColorDataType, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, mInternalColorFormat, xSize, ySize, 0, mColorFormat, mColorDataType, nullptr);
         }
         else
         {
@@ -1604,12 +1604,12 @@ void sgct::SGCTWindow::resizeFBOs()
     if(!mUseFixResolution && SGCTSettings::instance()->useFBO())
     {
         makeOpenGLContextCurrent( Shared_Context );
-        for(unsigned int i=0; i<NUMBER_OF_TEXTURES; i++)
+        for(unsigned int & mFrameBufferTexture : mFrameBufferTextures)
         {
-            if( mFrameBufferTextures[i] != GL_FALSE )
+            if( mFrameBufferTexture != GL_FALSE )
             {
-                glDeleteTextures(1, &mFrameBufferTextures[i]);
-                mFrameBufferTextures[i] = GL_FALSE;
+                glDeleteTextures(1, &mFrameBufferTexture);
+                mFrameBufferTexture = GL_FALSE;
             }
         }
         createTextures();
@@ -1642,7 +1642,7 @@ const sgct::SGCTWindow::StereoMode & sgct::SGCTWindow::getStereoMode() const
 
 void sgct::SGCTWindow::addViewport(float left, float right, float bottom, float top)
 {
-    sgct_core::Viewport * vpPtr = new sgct_core::Viewport(left, right, bottom, top);
+    auto * vpPtr = new sgct_core::Viewport(left, right, bottom, top);
     mViewports.push_back(vpPtr);
     MessageHandler::instance()->print(MessageHandler::NOTIFY_DEBUG, "Adding viewport (total %d)\n", mViewports.size());
 }
@@ -1658,10 +1658,10 @@ void sgct::SGCTWindow::addViewport(sgct_core::Viewport * vpPtr)
 */
 void sgct::SGCTWindow::deleteAllViewports()
 {
-    mCurrentViewport = NULL;
+    mCurrentViewport = nullptr;
 
-    for (unsigned int i = 0; i < mViewports.size(); i++)
-        delete mViewports[i];
+    for (auto & mViewport : mViewports)
+        delete mViewport;
     mViewports.clear();
 }
 
@@ -1670,7 +1670,7 @@ void sgct::SGCTWindow::deleteAllViewports()
 */
 sgct_core::BaseViewport * sgct::SGCTWindow::getCurrentViewport() const
 {
-    if(mCurrentViewport == NULL)
+    if(mCurrentViewport == nullptr)
         MessageHandler::instance()->print(MessageHandler::NOTIFY_ERROR, "Window %d error: Current viewport is NULL!\n", mId);
     return mCurrentViewport;
 }
@@ -1751,7 +1751,7 @@ void sgct::SGCTWindow::setStereoMode( StereoMode sm )
 */
 sgct_core::ScreenCapture * sgct::SGCTWindow::getScreenCapturePointer(unsigned int eye) const
 {
-    return eye < 2 ? mScreenCapture[eye] : NULL;
+    return eye < 2 ? mScreenCapture[eye] : nullptr;
 }
 
 /*!

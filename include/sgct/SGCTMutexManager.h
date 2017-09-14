@@ -27,7 +27,7 @@ public:
     /*! Get the SGCTSettings instance */
     static SGCTMutexManager * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new SGCTMutexManager();
         }
@@ -38,10 +38,10 @@ public:
     /*! Destroy the SGCTSettings instance */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
@@ -53,9 +53,8 @@ private:
     SGCTMutexManager();
     ~SGCTMutexManager();
 
-    // Don't implement these, should give compile warning if used
-    SGCTMutexManager( const SGCTMutexManager & settings );
-    const SGCTMutexManager & operator=(const SGCTMutexManager & settings );
+    SGCTMutexManager( const SGCTMutexManager & settings ) = delete;
+    const SGCTMutexManager & operator=(const SGCTMutexManager & settings ) = delete;
 
 private:
     static SGCTMutexManager * mInstance;

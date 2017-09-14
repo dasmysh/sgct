@@ -406,8 +406,8 @@ namespace sgct //simple graphics cluster toolkit
     };
 
     //backwards compability
-    typedef SharedInt16 SharedShort;
-    typedef SharedInt32 SharedInt;
+    using SharedShort = SharedInt16;
+    using SharedInt = SharedInt32;
 
     /*!
     Mutex protected unsigned char for multi-thread data sharing

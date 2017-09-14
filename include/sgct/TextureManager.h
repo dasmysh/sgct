@@ -47,7 +47,7 @@ public:
     /*! Get the TextureManager instance */
     static TextureManager * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new TextureManager();
         }
@@ -58,10 +58,10 @@ public:
     /*! Destroy the TextureManager */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
@@ -95,9 +95,8 @@ private:
 
     void freeTextureData();
 
-    // Don't implement these, should give compile warning if used
-    TextureManager( const TextureManager & tm );
-    const TextureManager & operator=(const TextureManager & rhs );
+    TextureManager( const TextureManager & tm ) = delete;
+    const TextureManager & operator=(const TextureManager & rhs) = delete;
 
 private:
     static TextureManager * mInstance;

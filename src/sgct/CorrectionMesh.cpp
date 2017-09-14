@@ -91,20 +91,17 @@ sgct_core::CorrectionMeshGeometry::~CorrectionMeshGeometry()
 
 sgct_core::CorrectionMesh::CorrectionMesh()
 {
-    mTempVertices = NULL;
-    mTempIndices = NULL;
+    mTempVertices = nullptr;
+    mTempIndices = nullptr;
 
-    for (int i = 0; i < LAST_MESH; i++)
+    for (auto & mGeometrie : mGeometries)
     {
-        mGeometries[i].mNumberOfVertices = 0;
-        mGeometries[i].mNumberOfIndices = 0;
+        mGeometrie.mNumberOfVertices = 0;
+        mGeometrie.mNumberOfIndices = 0;
     }
 }
 
-sgct_core::CorrectionMesh::~CorrectionMesh()
-{    
-    
-}
+sgct_core::CorrectionMesh::~CorrectionMesh() = default;
 
 /*!
 This function finds a suitible parser for warping meshes and loads them into memory.
@@ -245,7 +242,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateDomeProjectionMesh(const std::str
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO,
         "CorrectionMesh: Reading DomeProjection mesh data from '%s'.\n", meshPath.c_str());
 
-    FILE * meshFile = NULL;
+    FILE * meshFile = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&meshFile, meshPath.c_str(), "r") != 0 || !meshFile)
     {
@@ -278,7 +275,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateDomeProjectionMesh(const std::str
 
     while (!feof(meshFile))
     {
-        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != NULL)
+        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != nullptr)
         {
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
             if (sscanf_s(lineBuffer, "%f;%f;%f;%f;%u;%u", &x, &y, &u, &v, &col, &row) == 6)
@@ -383,7 +380,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateScalableMesh(const std::string & 
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO,
         "CorrectionMesh: Reading scalable mesh data from '%s'.\n", meshPath.c_str());
 
-    FILE * meshFile = NULL;
+    FILE * meshFile = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if( fopen_s(&meshFile, meshPath.c_str(), "r") != 0 || !meshFile )
     {
@@ -422,7 +419,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateScalableMesh(const std::string & 
     char lineBuffer[MAX_LINE_LENGTH];
     while( !feof( meshFile ) )
     {
-        if( fgets(lineBuffer, MAX_LINE_LENGTH, meshFile ) != NULL )
+        if( fgets(lineBuffer, MAX_LINE_LENGTH, meshFile ) != nullptr )
         {
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
             if( sscanf_s(lineBuffer, "%f %f %u %f %f", &x, &y, &intensity, &s, &t) == 5 )
@@ -430,7 +427,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateScalableMesh(const std::string & 
             if( sscanf(lineBuffer, "%f %f %u %f %f", &x, &y, &intensity, &s, &t) == 5 )
 #endif
             {
-                if( mTempVertices != NULL && resolution[0] != 0 && resolution[1] != 0 )
+                if( mTempVertices != nullptr && resolution[0] != 0 && resolution[1] != 0 )
                 {
                     vertexPtr = &mTempVertices[numOfVerticesRead];
                     vertexPtr->x = (x / static_cast<float>(resolution[0])) * parent->getXSize() + parent->getX();
@@ -451,7 +448,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateScalableMesh(const std::string & 
             else if( sscanf(lineBuffer, "[ %u %u %u ]", &a, &b, &c) == 3 )
 #endif
             {
-                if (mTempIndices != NULL)
+                if (mTempIndices != nullptr)
                 {
                     mTempIndices[numOfFacesRead * 3] = a;
                     mTempIndices[numOfFacesRead * 3 + 1] = b;
@@ -533,10 +530,10 @@ bool sgct_core::CorrectionMesh::readAndGenerateScalableMesh(const std::string & 
     //normalize
     for (unsigned int i = 0; i < numberOfVertices; i++)
     {
-        float xMin = static_cast<float>(orthoCoords[0]);
-        float xMax = static_cast<float>(orthoCoords[1]);
-        float yMin = static_cast<float>(orthoCoords[2]);
-        float yMax = static_cast<float>(orthoCoords[3]);
+        auto xMin = static_cast<float>(orthoCoords[0]);
+        auto xMax = static_cast<float>(orthoCoords[1]);
+        auto yMin = static_cast<float>(orthoCoords[2]);
+        auto yMax = static_cast<float>(orthoCoords[3]);
 
         //normalize between 0.0 and 1.0
         float xVal = (mTempVertices[i].x - xMin) / (xMax - xMin);
@@ -565,7 +562,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateScissMesh(const std::string & mes
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO,
         "CorrectionMesh: Reading sciss mesh data from '%s'.\n", meshPath.c_str());
 
-    FILE * meshFile = NULL;
+    FILE * meshFile = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&meshFile, meshPath.c_str(), "rb") != 0 || !meshFile)
     {
@@ -698,7 +695,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateScissMesh(const std::string & mes
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "CorrectionMesh: Number of vertices = %u (%ux%u)\n", numberOfVertices, size[0], size[1]);
     }
     //read vertices
-    SCISSTexturedVertex * texturedVertexList = new SCISSTexturedVertex[numberOfVertices];
+    auto * texturedVertexList = new SCISSTexturedVertex[numberOfVertices];
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     retval = fread_s(texturedVertexList, sizeof(SCISSTexturedVertex) * numberOfVertices, sizeof(SCISSTexturedVertex), numberOfVertices, meshFile);
 #else
@@ -851,7 +848,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateScissMesh(const std::string & mes
 
     //clean up
     delete [] texturedVertexList;
-    texturedVertexList = NULL;
+    texturedVertexList = nullptr;
 
     createMesh(&mGeometries[WARP_MESH]);
 
@@ -865,7 +862,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateSkySkanMesh(const std::string & m
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO,
         "CorrectionMesh: Reading SkySkan mesh data from '%s'.\n", meshPath.c_str());
 
-    FILE * meshFile = NULL;
+    FILE * meshFile = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&meshFile, meshPath.c_str(), "r") != 0 || !meshFile)
     {
@@ -900,7 +897,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateSkySkanMesh(const std::string & m
     char lineBuffer[MAX_LINE_LENGTH];
     while (!feof(meshFile))
     {
-        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != NULL)
+        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != nullptr)
         {
 
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
@@ -1173,7 +1170,7 @@ bool sgct_core::CorrectionMesh::readAndGeneratePaulBourkeMesh(const std::string 
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO,
         "CorrectionMesh: Reading Paul Bourke spherical mirror mesh data from '%s'.\n", meshPath.c_str());
 
-    FILE * meshFile = NULL;
+    FILE * meshFile = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&meshFile, meshPath.c_str(), "r") != 0 || !meshFile)
     {
@@ -1197,7 +1194,7 @@ bool sgct_core::CorrectionMesh::readAndGeneratePaulBourkeMesh(const std::string 
     char lineBuffer[MAX_LINE_LENGTH];
 
     //get the fist line containing the mapping type id
-    if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != NULL)
+    if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != nullptr)
     {
         int tmpi;
         if(_sscanf(lineBuffer, "%d", &tmpi) == 1)
@@ -1205,7 +1202,7 @@ bool sgct_core::CorrectionMesh::readAndGeneratePaulBourkeMesh(const std::string 
     }
 
     //get the mesh dimensions
-    if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != NULL)
+    if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != nullptr)
     {
         if (_sscanf(lineBuffer, "%d %d", &size[0], &size[1]) == 2)
         {
@@ -1224,7 +1221,7 @@ bool sgct_core::CorrectionMesh::readAndGeneratePaulBourkeMesh(const std::string 
     //get all data
     while (!feof(meshFile))
     {
-        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != NULL)
+        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != nullptr)
         {
             if (_sscanf(lineBuffer, "%f %f %f %f %f", &x, &y, &s, &t, &intensity) == 5)
             {
@@ -1311,7 +1308,7 @@ bool sgct_core::CorrectionMesh::readAndGeneratePaulBourkeMesh(const std::string 
     createMesh(&mGeometries[WARP_MESH]);
 
     //force regeneration of dome render quad
-    if (FisheyeProjection* fishPrj = dynamic_cast<FisheyeProjection*>(parent->getNonLinearProjectionPtr()))
+    if (auto* fishPrj = dynamic_cast<FisheyeProjection*>(parent->getNonLinearProjectionPtr()))
     {
         fishPrj->setIgnoreAspectRatio(true);
         fishPrj->update(1.0f, 1.0f);
@@ -1326,7 +1323,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateOBJMesh(const std::string & meshP
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_INFO,
         "CorrectionMesh: Reading Maya Wavefront OBJ mesh data from '%s'.\n", meshPath.c_str());
 
-    FILE * meshFile = NULL;
+    FILE * meshFile = nullptr;
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     if (fopen_s(&meshFile, meshPath.c_str(), "r") != 0 || !meshFile)
     {
@@ -1353,7 +1350,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateOBJMesh(const std::string & meshP
     //get all data
     while (!feof(meshFile))
     {
-        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != NULL)
+        if (fgets(lineBuffer, MAX_LINE_LENGTH, meshFile) != nullptr)
         {
             if (_sscanf(lineBuffer, "v %f %f %*f", &tmpVert.x, &tmpVert.y) == 2)
             {
@@ -1385,7 +1382,7 @@ bool sgct_core::CorrectionMesh::readAndGenerateOBJMesh(const std::string & meshP
     }
 
     //sanity check
-    if (counter != verts.size() || verts.size() == 0)
+    if (counter != verts.size() || verts.empty())
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "CorrectionMesh: Vertex count doesn't match number of texture coordinates!\n");
         return false;
@@ -1677,16 +1674,16 @@ void sgct_core::CorrectionMesh::exportMesh(const std::string & exportMeshPath)
 void sgct_core::CorrectionMesh::cleanUp()
 {    
     //clean up
-    if( mTempVertices != NULL )
+    if( mTempVertices != nullptr )
     {
         delete[] mTempVertices;
-        mTempVertices = NULL;
+        mTempVertices = nullptr;
     }
 
-    if( mTempIndices != NULL )
+    if( mTempIndices != nullptr )
     {
         delete[] mTempIndices;
-        mTempIndices = NULL;
+        mTempIndices = nullptr;
     }
 }
 
@@ -1730,7 +1727,7 @@ void sgct_core::CorrectionMesh::render(const MeshType & mt)
             glTexCoordPointer(2, GL_FLOAT, sizeof(CorrectionMeshVertex), reinterpret_cast<void*>(8));
             glColorPointer(4, GL_FLOAT, sizeof(CorrectionMeshVertex), reinterpret_cast<void*>(16));
 
-            glDrawElements(geomPtr->mGeometryType, geomPtr->mNumberOfIndices, GL_UNSIGNED_INT, NULL);
+            glDrawElements(geomPtr->mGeometryType, geomPtr->mNumberOfIndices, GL_UNSIGNED_INT, nullptr);
         
             glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -1740,7 +1737,7 @@ void sgct_core::CorrectionMesh::render(const MeshType & mt)
         else
         {
             glBindVertexArray(geomPtr->mMeshData[Array]);
-            glDrawElements(geomPtr->mGeometryType, geomPtr->mNumberOfIndices, GL_UNSIGNED_INT, NULL);
+            glDrawElements(geomPtr->mGeometryType, geomPtr->mNumberOfIndices, GL_UNSIGNED_INT, nullptr);
             glBindVertexArray(0);
         }
     }

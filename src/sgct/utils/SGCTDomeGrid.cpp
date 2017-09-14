@@ -21,7 +21,7 @@ sgct_utils::SGCTDomeGrid::SGCTDomeGrid(float radius, float FOV, unsigned int seg
 
 void sgct_utils::SGCTDomeGrid::init(float radius, float FOV, unsigned int segments, unsigned int rings, unsigned int resolution)
 {
-    mVerts = NULL;
+    mVerts = nullptr;
     mResolution = resolution;
     mRings = rings;
     mSegments = segments;
@@ -95,10 +95,10 @@ void sgct_utils::SGCTDomeGrid::init(float radius, float FOV, unsigned int segmen
     }
 
     //free data
-    if(mVerts != NULL)
+    if(mVerts != nullptr)
     {
         delete [] mVerts;
-        mVerts = NULL;
+        mVerts = nullptr;
     }
 }
 
@@ -138,7 +138,7 @@ void sgct_utils::SGCTDomeGrid::drawVBO()
 
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
 
-    glVertexPointer(3, GL_FLOAT, 0, NULL);
+    glVertexPointer(3, GL_FLOAT, 0, nullptr);
 
     for(unsigned int r=0; r<mRings; r++)
         glDrawArrays(GL_LINE_LOOP, r * mResolution, mResolution);

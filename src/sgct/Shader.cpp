@@ -37,9 +37,7 @@ sgct_core::Shader::Shader( sgct_core::Shader::ShaderType shaderType ) :
 Destructor does nothing, have to explicitly call delete if shader should be destroyed.
 This is because copying between shaders should be allowed (i.e. when storing in containers)
 */
-sgct_core::Shader::~Shader(void)
-{
-}
+sgct_core::Shader::~Shader() = default;
 //----------------------------------------------------------------------------//
 
 /*!
@@ -150,7 +148,7 @@ bool sgct_core::Shader::setSourceFromString( const std::string & sourceString )
     const char * shaderSrc[] = { sourceString.c_str() };
 
     mShaderId = glCreateShader( mShaderType );
-    glShaderSource( mShaderId, 1, shaderSrc, NULL );
+    glShaderSource( mShaderId, 1, shaderSrc, nullptr );
 
     //
     // Compile and check status
@@ -189,9 +187,9 @@ bool sgct_core::Shader::checkCompilationStatus() const
             return false;
         }
 
-        GLchar * log = new GLchar[logLength];
+        auto * log = new GLchar[logLength];
 
-        glGetShaderInfoLog( mShaderId, logLength, NULL, log );
+        glGetShaderInfoLog( mShaderId, logLength, nullptr, log );
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "%s compile error: %s\n", getShaderTypeName( mShaderType ).c_str(), log );
 
         delete[] log;

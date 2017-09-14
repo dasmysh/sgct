@@ -77,7 +77,7 @@ void main()\n\
 //----------------------------------------------------------------------
 
 /*! Initiate FontManager instance to NULL */
-sgct_text::FontManager * sgct_text::FontManager::mInstance = NULL;
+sgct_text::FontManager * sgct_text::FontManager::mInstance = nullptr;
 
 /*! Default height in pixels for all font faces */
 const FT_Short sgct_text::FontManager::mDefaultHeight = 10;
@@ -85,10 +85,10 @@ const FT_Short sgct_text::FontManager::mDefaultHeight = 10;
 /*!
 Constructor initiates the freetyp library
 */
-sgct_text::FontManager::FontManager(void)
+sgct_text::FontManager::FontManager()
 {
     FT_Error error = FT_Init_FreeType( &mFTLibrary );
-    mFace = NULL;
+    mFace = nullptr;
     mStrokeColor.r = 0.0f;
     mStrokeColor.g = 0.0f;
     mStrokeColor.b = 0.0f;
@@ -110,7 +110,7 @@ sgct_text::FontManager::FontManager(void)
     if( GetWindowsDirectory(fontDir,128) > 0)
     {
         mDefaultFontPath.assign( fontDir );
-        mDefaultFontPath += "\\Fonts\\";
+        mDefaultFontPath += R"(\Fonts\)";
     }
 #elif __APPLE__
     //System Fonts
@@ -128,7 +128,7 @@ sgct_text::FontManager::FontManager(void)
 /*!
 Destructor cleans up all font objects, textures and shaders
 */
-sgct_text::FontManager::~FontManager(void)
+sgct_text::FontManager::~FontManager()
 {
     for (auto& a : mFontMap)
     {
@@ -141,7 +141,7 @@ sgct_text::FontManager::~FontManager(void)
     }
     mFontMap.clear();
 
-    if( mFTLibrary != NULL )
+    if( mFTLibrary != nullptr )
     {
         FT_Done_FreeType( mFTLibrary );
     }
@@ -242,7 +242,7 @@ Creates font textures with a specific height if a path to the font exists
 */
 sgct_text::Font * sgct_text::FontManager::createFont( const std::string & fontName, unsigned int height )
 {
-    std::map<std::string, std::string>::iterator it = mFontPaths.find( fontName );
+    auto it = mFontPaths.find( fontName );
 
     if( it == mFontPaths.end() )
     {
@@ -250,7 +250,7 @@ sgct_text::Font * sgct_text::FontManager::createFont( const std::string & fontNa
         return mFontMap.end()->second.end()->second;
     }
 
-    if( mFTLibrary == NULL )
+    if( mFTLibrary == nullptr )
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Freetype library is not initialized, can't create font [%s].\n", fontName.c_str() );
         return mFontMap.end()->second.end()->second;
@@ -263,7 +263,7 @@ sgct_text::Font * sgct_text::FontManager::createFont( const std::string & fontNa
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Unsopperted file format [%s] for font [%s].\n", it->second.c_str(), fontName.c_str() );
         return mFontMap.end()->second.end()->second;
     }
-    else if( error != 0 || mFace == NULL )
+    else if( error != 0 || mFace == nullptr )
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "FontManager: Font '%s' not found!\n", it->second.c_str());
         return mFontMap.end()->second.end()->second;

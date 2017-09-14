@@ -43,7 +43,7 @@ The destructor clears the shader data vector but the program can still be used. 
 by calling deleteProgram. This is so that programs can be copied when storing
 in containers.
 */
-sgct::ShaderProgram::~ShaderProgram(void)
+sgct::ShaderProgram::~ShaderProgram()
 {
     mShaders.clear();
 }
@@ -54,12 +54,12 @@ Will deattach all attached shaders, delete them and then delete the program
 */
 void sgct::ShaderProgram::deleteProgram()
 {        
-    for(std::size_t i=0; i<mShaders.size(); i++)
+    for(auto & mShader : mShaders)
     {
-        if( mShaders[i].mShader.getId() > GL_FALSE )
+        if( mShader.mShader.getId() > GL_FALSE )
         {
-            glDetachShader( mProgramId, mShaders[i].mShader.getId() );
-            mShaders[i].mShader.deleteShader();
+            glDetachShader( mProgramId, mShader.mShader.getId() );
+            mShader.mShader.deleteShader();
         }
     }
 
@@ -163,10 +163,10 @@ bool sgct::ShaderProgram::createAndLinkProgram()
     //
     // Link shaders
     //
-    for(std::size_t i=0; i<mShaders.size(); i++)
-        if( mShaders[i].mShader.getId() > GL_FALSE )
+    for(auto & mShader : mShaders)
+        if( mShader.mShader.getId() > GL_FALSE )
         {
-            glAttachShader( mProgramId, mShaders[i].mShader.getId() );
+            glAttachShader( mProgramId, mShader.mShader.getId() );
         }
 
     glLinkProgram( mProgramId );
@@ -185,17 +185,17 @@ bool sgct::ShaderProgram::reload()
     
     deleteProgram();
 
-    for(std::size_t i=0; i<mShaders.size(); i++)
+    for(auto & mShader : mShaders)
     {
         bool success;
-        if( mShaders[i].mIsSrcFile )
-            success = mShaders[i].mShader.setSourceFromFile( mShaders[i].mShaderSrc );
+        if( mShader.mIsSrcFile )
+            success = mShader.mShader.setSourceFromFile( mShader.mShaderSrc );
         else
-            success = mShaders[i].mShader.setSourceFromString( mShaders[i].mShaderSrc );
+            success = mShader.mShader.setSourceFromString( mShader.mShaderSrc );
 
         if( !success )
         {
-            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "ShaderProgram: Failed to load '%s'!\n", mShaders[i].mShaderSrc.c_str() );
+            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "ShaderProgram: Failed to load '%s'!\n", mShader.mShaderSrc.c_str() );
             return false;
         }
     }
@@ -250,8 +250,8 @@ bool sgct::ShaderProgram::checkLinkStatus() const
         GLint logLength;
         glGetProgramiv( mProgramId, GL_INFO_LOG_LENGTH, &logLength );
 
-        GLchar * log = new GLchar[logLength];
-        glGetProgramInfoLog( mProgramId, logLength, NULL, log );
+        auto * log = new GLchar[logLength];
+        glGetProgramInfoLog( mProgramId, logLength, nullptr, log );
 
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "Shader program[%s] linking error: %s\n", mName.c_str(), log );
 

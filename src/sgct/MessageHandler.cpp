@@ -17,14 +17,14 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <string.h>
 #include <time.h>
 
-sgct::MessageHandler * sgct::MessageHandler::mInstance = NULL;
+sgct::MessageHandler * sgct::MessageHandler::mInstance = nullptr;
 
-sgct::MessageHandler::MessageHandler(void)
+sgct::MessageHandler::MessageHandler()
 {
     mMaxMessageSize = 2048;
     mCombinedMessageSize = mMaxMessageSize + 32;
     
-    //nothrow makes sure that a null pointer is returned upon failiure
+    //nothrow makes sure that a null pointer is returned upon failure
     mParseBuffer    = new (std::nothrow) char[mMaxMessageSize];
     mCombinedBuffer = new (std::nothrow) char[mCombinedMessageSize];
     headerSpace        = new (std::nothrow) unsigned char[ sgct_core::SGCTNetwork::mHeaderSize ];
@@ -58,24 +58,24 @@ sgct::MessageHandler::MessageHandler(void)
     mLogToCallback = false;
     mMessageCallback = SGCT_NULL_PTR;
 
-    setLogPath(NULL);
+    setLogPath(nullptr);
 }
 
-sgct::MessageHandler::~MessageHandler(void)
+sgct::MessageHandler::~MessageHandler()
 {
     mMessageCallback = SGCT_NULL_PTR;
 
     if(mParseBuffer)
         delete [] mParseBuffer;
-    mParseBuffer = NULL;
+    mParseBuffer = nullptr;
 
     if(mCombinedBuffer)
         delete [] mCombinedBuffer;
-    mCombinedBuffer = NULL;
+    mCombinedBuffer = nullptr;
 
     if(headerSpace)
         delete [] headerSpace;
-    headerSpace = NULL;
+    headerSpace = nullptr;
 
     mBuffer.clear();
     mRecBuffer.clear();
@@ -96,7 +96,7 @@ void sgct::MessageHandler::printv(const char *fmt, va_list ap)
     //prevent writing to console simultaneously
     SGCTMutexManager::instance()->lockMutex( SGCTMutexManager::ConsoleMutex );
 
-    std::size_t size = static_cast<std::size_t>(1 + vscprintf(fmt, ap));
+    auto size = static_cast<std::size_t>(1 + vscprintf(fmt, ap));
     if( size > mMaxMessageSize )
     {
         delete [] mParseBuffer;
@@ -108,7 +108,7 @@ void sgct::MessageHandler::printv(const char *fmt, va_list ap)
 
         delete [] mCombinedBuffer;
         mCombinedBuffer = new (std::nothrow) char[mCombinedMessageSize];
-        if (mCombinedBuffer == NULL)
+        if (mCombinedBuffer == nullptr)
             return;
 
         memset(mCombinedBuffer, 0, mCombinedMessageSize);
@@ -165,7 +165,7 @@ void sgct::MessageHandler::logToFile(const char * buffer)
     if (mFilename.empty())
         return;
     
-    FILE* pFile = NULL;
+    FILE* pFile = nullptr;
     bool error = false;
 
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
@@ -193,11 +193,11 @@ void sgct::MessageHandler::logToFile(const char * buffer)
  */
 void sgct::MessageHandler::setLogPath(const char * path, int nodeId)
 {
-    time_t now = time(NULL);
+    time_t now = time(nullptr);
 
     std::stringstream ss;
 
-    if (path != NULL)
+    if (path != nullptr)
         ss << path << "/";
 
     char tmpBuff[64];
@@ -231,7 +231,7 @@ void sgct::MessageHandler::setLogPath(const char * path, int nodeId)
 */
 void sgct::MessageHandler::print(const char *fmt, ...)
 {
-    if ( fmt == NULL )        // If There's No Text
+    if ( fmt == nullptr )        // If There's No Text
     {
         *mParseBuffer=0;    // Do Nothing
         return;
@@ -250,7 +250,7 @@ void sgct::MessageHandler::print(const char *fmt, ...)
 */
 void sgct::MessageHandler::print(NotifyLevel nl, const char *fmt, ...)
 {
-    if (nl > getNotifyLevel() || fmt == NULL)        // If There's No Text
+    if (nl > getNotifyLevel() || fmt == nullptr)        // If There's No Text
     {
         *mParseBuffer=0;    // Do Nothing
         return;
@@ -350,7 +350,7 @@ Get the time of day string
 */
 const char * sgct::MessageHandler::getTimeOfDayStr()
 {
-    time_t now = time(NULL);
+    time_t now = time(nullptr);
 #if (_MSC_VER >= 1400) //visual studio 2005 or later
     struct tm timeInfo;
     errno_t err = localtime_s(&timeInfo, &now);
@@ -388,7 +388,7 @@ void sgct::MessageHandler::printDebug(NotifyLevel nl, const char *fmt, ...)
 
 void sgct::MessageHandler::printIndent(NotifyLevel nl, unsigned int indentation, const char* fmt, ...)
 {
-    if (nl > getNotifyLevel() || fmt == NULL)
+    if (nl > getNotifyLevel() || fmt == nullptr)
     {
         *mParseBuffer = 0;
         return;
@@ -417,7 +417,7 @@ void sgct::MessageHandler::printIndent(NotifyLevel nl, unsigned int indentation,
 
 void sgct::MessageHandler::sendMessageToServer(const char * str)
 {
-    if( str == NULL)
+    if( str == nullptr)
         return;
 
     //if client send to server

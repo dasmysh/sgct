@@ -12,7 +12,7 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <sgct/MessageHandler.h>
 #include <sgct/Engine.h>
 
-sgct::TextureManager * sgct::TextureManager::mInstance = NULL;
+sgct::TextureManager * sgct::TextureManager::mInstance = nullptr;
 
 sgct_core::TextureData::TextureData()
 {
@@ -172,7 +172,7 @@ bool sgct::TextureManager::loadTexture(const std::string name, const std::string
     if (!updateTexture(name, &texID, &reload))
         return true;
     
-    sgct_cppxeleven::unordered_map<std::string, sgct_core::TextureData>::iterator textureItem = mTextures.end();
+    auto textureItem = mTextures.end();
 
     //load image
     if ( !img.load(filename) )
@@ -185,7 +185,7 @@ bool sgct::TextureManager::loadTexture(const std::string name, const std::string
         return false;
     }
     
-    if (img.getData() != NULL)
+    if (img.getData() != nullptr)
     {
         if (!uploadImage(&img, &texID))
             return false;
@@ -239,7 +239,7 @@ bool sgct::TextureManager::loadTexture(const std::string name, sgct_core::Image 
 
 //    sgct_cppxeleven::unordered_map<std::string, sgct_core::TextureData>::iterator textureItem = mTextures.end();
 
-    if (imgPtr->getData() != NULL)
+    if (imgPtr->getData() != nullptr)
     {
         if (!uploadImage(imgPtr, &texID))
             return false;
@@ -292,7 +292,7 @@ bool sgct::TextureManager::loadUnManagedTexture(unsigned int & texID, const std:
         return false;
     }
 
-    if (img.getData() != NULL)
+    if (img.getData() != nullptr)
     {
         if (!uploadImage(&img, &tmpTexID))
             return false;
@@ -315,7 +315,7 @@ bool sgct::TextureManager::updateTexture(const std::string & name, unsigned int 
 {
     //check if texture exits in manager
     bool exist = mTextures.count(name) > 0;
-    sgct_cppxeleven::unordered_map<std::string, sgct_core::TextureData>::iterator textureItem = mTextures.end();
+    auto textureItem = mTextures.end();
 
     if (exist)
     {
@@ -367,7 +367,7 @@ bool sgct::TextureManager::uploadImage(sgct_core::Image * imgPtr, unsigned int *
     }
 
     GLint internalFormat;
-    unsigned int bpc = static_cast<unsigned int>(imgPtr->getBytesPerChannel());
+    auto bpc = static_cast<unsigned int>(imgPtr->getBytesPerChannel());
 
     if (bpc > 2)
     {
@@ -487,8 +487,8 @@ void sgct::TextureManager::freeTextureData()
 {
     //the textures might not be stored in a sequence so
     //let's erase them one by one
-    for (auto it = mTextures.begin(); it != mTextures.end(); ++it)
-        if (it->second.mId)
-            glDeleteTextures(1, &(it->second.mId));
+    for (auto & mTexture : mTextures)
+        if (mTexture.second.mId)
+            glDeleteTextures(1, &(mTexture.second.mId));
     mTextures.clear();
 }

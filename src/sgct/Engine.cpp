@@ -37,7 +37,7 @@ For conditions of distribution and use, see copyright notice in sgct.h
 
 //#define __SGCT_RENDER_LOOP_DEBUG__
 
-sgct::Engine * sgct::Engine::mInstance = NULL;
+sgct::Engine * sgct::Engine::mInstance = nullptr;
 sgct_core::Touch sgct::Engine::mCurrentTouchPoints = sgct_core::Touch();
 
 //Callback wrappers for GLFW
@@ -105,12 +105,12 @@ sgct::Engine::Engine( int& argc, char**& argv )
 {
     //init pointers
     mInstance = this;
-    mNetworkConnections = NULL;
-    mConfig = NULL;
+    mNetworkConnections = nullptr;
+    mConfig = nullptr;
     mRunMode = Default_Mode;
-    mStatistics = NULL;
-    mThisNode = NULL;
-    mThreadPtr = NULL;
+    mStatistics = nullptr;
+    mThisNode = nullptr;
+    mThreadPtr = nullptr;
 
     //init function pointers
     mDrawFnPtr = SGCT_NULL_PTR;
@@ -131,10 +131,10 @@ sgct::Engine::Engine( int& argc, char**& argv )
     mScreenShotFnPtr1 = SGCT_NULL_PTR;
     mScreenShotFnPtr2 = SGCT_NULL_PTR;
 
-    mInternalDrawFn = NULL;
-    mInternalRenderFBOFn = NULL;
-    mInternalDrawOverlaysFn = NULL;
-    mInternalRenderPostFXFn = NULL;
+    mInternalDrawFn = nullptr;
+    mInternalRenderFBOFn = nullptr;
+    mInternalDrawOverlaysFn = nullptr;
+    mInternalRenderPostFXFn = nullptr;
 
     mTerminate = false;
     mRenderingOffScreen = false;
@@ -150,10 +150,10 @@ sgct::Engine::Engine( int& argc, char**& argv )
     mCurrentViewportIndex[MainViewport] = 0;
     mCurrentViewportIndex[SubViewport] = 0;
     mCurrentRenderTarget = WindowBuffer;
-    mCurrentOffScreenBuffer = NULL;
+    mCurrentOffScreenBuffer = nullptr;
 
-    for(unsigned int i=0; i<MAX_UNIFORM_LOCATIONS; i++)
-        mShaderLocs[i] = -1;
+    for(int & mShaderLoc : mShaderLocs)
+        mShaderLoc = -1;
 
     setClearBufferFunction( clearBuffer );
     mNearClippingPlaneDist = 0.1f;
@@ -318,12 +318,12 @@ bool sgct::Engine::initNetwork()
     //If the user has provided the node id as an incorrect cmd argument then make the mThisNode invalid
     if(sgct_core::ClusterManager::instance()->getThisNodeId() >= static_cast<int>(sgct_core::ClusterManager::instance()->getNumberOfNodes()) ||
        sgct_core::ClusterManager::instance()->getThisNodeId() < 0)
-        mThisNode = NULL;
+        mThisNode = nullptr;
     else
         mThisNode = sgct_core::ClusterManager::instance()->getThisNodePtr(); //Set node pointer
 
     //if any error occured
-    if( mThisNode == NULL ) //fatal error
+    if( mThisNode == nullptr ) //fatal error
     {
         MessageHandler::instance()->print(MessageHandler::NOTIFY_ERROR, "This computer is not a part of the cluster configuration!\n");
         mNetworkConnections->close();
@@ -536,7 +536,7 @@ bool sgct::Engine::initWindows()
         mPreWindowFnPtr();
 
     mStatistics = new sgct_core::Statistics();
-    GLFWwindow* share = NULL;
+    GLFWwindow* share = nullptr;
     for(std::size_t i=0; i < mThisNode->getNumberOfWindows(); i++)
     {
         if( i > 0 )
@@ -702,10 +702,10 @@ void sgct::Engine::initOGL()
                                              sgct_cppxeleven::placeholders::_4);
             
             //left channel (Mono and Stereo_Left)
-            if( getCurrentWindowPtr()->getScreenCapturePointer(0) != NULL )
+            if( getCurrentWindowPtr()->getScreenCapturePointer(0) != nullptr )
                 getCurrentWindowPtr()->getScreenCapturePointer(0)->setCaptureCallback(callback);
             //right channel (Stereo_Right)
-            if( getCurrentWindowPtr()->getScreenCapturePointer(1) != NULL )
+            if( getCurrentWindowPtr()->getScreenCapturePointer(1) != nullptr )
                 getCurrentWindowPtr()->getScreenCapturePointer(1)->setCaptureCallback(callback);
         }
         else if (mScreenShotFnPtr2 != SGCT_NULL_PTR)
@@ -719,10 +719,10 @@ void sgct::Engine::initOGL()
                 sgct_cppxeleven::placeholders::_4);
 
             //left channel (Mono and Stereo_Left)
-            if (getCurrentWindowPtr()->getScreenCapturePointer(0) != NULL)
+            if (getCurrentWindowPtr()->getScreenCapturePointer(0) != nullptr)
                 getCurrentWindowPtr()->getScreenCapturePointer(0)->setCaptureCallback(callback);
             //right channel (Stereo_Right)
-            if (getCurrentWindowPtr()->getScreenCapturePointer(1) != NULL)
+            if (getCurrentWindowPtr()->getScreenCapturePointer(1) != nullptr)
                 getCurrentWindowPtr()->getScreenCapturePointer(1)->setCaptureCallback(callback);
         }
     }
@@ -781,7 +781,7 @@ void sgct::Engine::clean()
 
     if (mCleanUpFnPtr != SGCT_NULL_PTR)
     {
-        if( mThisNode != NULL && mThisNode->getNumberOfWindows() > 0 )
+        if( mThisNode != nullptr && mThisNode->getNumberOfWindows() > 0 )
             mThisNode->getWindowPtr(0)->makeOpenGLContextCurrent( SGCTWindow::Shared_Context );
         mCleanUpFnPtr();
     }
@@ -800,14 +800,14 @@ void sgct::Engine::clean()
 
         mThreadPtr->join();
         delete mThreadPtr;
-        mThreadPtr = NULL;
+        mThreadPtr = nullptr;
         MessageHandler::instance()->print(MessageHandler::NOTIFY_DEBUG, "Done.\n");
     }
 
     //de-init window and unbind swapgroups...
     if(sgct_core::ClusterManager::instance()->getNumberOfNodes() > 0)
     {
-        if(mThisNode != NULL)
+        if(mThisNode != nullptr)
             for(std::size_t i=0; i<mThisNode->getNumberOfWindows(); i++)
             {
                 mThisNode->getWindowPtr(i)->close();
@@ -815,33 +815,33 @@ void sgct::Engine::clean()
     }
 
     //close TCP connections
-    if( mNetworkConnections != NULL )
+    if( mNetworkConnections != nullptr )
     {
         delete mNetworkConnections;
-        mNetworkConnections = NULL;
+        mNetworkConnections = nullptr;
     }
 
-    if( mConfig != NULL )
+    if( mConfig != nullptr )
     {
         delete mConfig;
-        mConfig = NULL;
+        mConfig = nullptr;
     }
 
     // Destroy explicitly to avoid memory leak messages
     //Shared contex -------------------------------------------------------------------------------->
-    if( mThisNode != NULL && mThisNode->getNumberOfWindows() > 0 )
+    if( mThisNode != nullptr && mThisNode->getNumberOfWindows() > 0 )
         mThisNode->getWindowPtr(0)->makeOpenGLContextCurrent( SGCTWindow::Shared_Context );
-    if( mStatistics != NULL )
+    if( mStatistics != nullptr )
     {
         MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Deleting stats data...\n");
         delete mStatistics;
-        mStatistics = NULL;
+        mStatistics = nullptr;
     }
 
     MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Destroying shader manager and internal shaders...\n");
     ShaderManager::destroy();
-    for(size_t i = 0; i < NUMBER_OF_SHADERS; i++)
-        mShaders[i].deleteProgram();
+    for(auto & mShader : mShaders)
+        mShader.deleteProgram();
 
     MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Destroying texture manager...\n");
     TextureManager::destroy();
@@ -852,7 +852,7 @@ void sgct::Engine::clean()
 #endif
 
     //Window specific context ------------------------------------------------------------------->
-    if( mThisNode != NULL && mThisNode->getNumberOfWindows() > 0 )
+    if( mThisNode != nullptr && mThisNode->getNumberOfWindows() > 0 )
         mThisNode->getWindowPtr(0)->makeOpenGLContextCurrent( SGCTWindow::Window_Context );
     
     MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Destroying shared data...\n");
@@ -899,10 +899,10 @@ void sgct::Engine::clearAllCallbacks()
     mScreenShotFnPtr1 = SGCT_NULL_PTR;
     mScreenShotFnPtr2 = SGCT_NULL_PTR;
 
-    mInternalDrawFn = NULL;
-    mInternalRenderFBOFn = NULL;
-    mInternalDrawOverlaysFn = NULL;
-    mInternalRenderPostFXFn = NULL;
+    mInternalDrawFn = nullptr;
+    mInternalRenderFBOFn = nullptr;
+    mInternalDrawOverlaysFn = nullptr;
+    mInternalRenderPostFXFn = nullptr;
 
     //global
     gKeyboardCallbackFnPtr = SGCT_NULL_PTR;
@@ -914,9 +914,9 @@ void sgct::Engine::clearAllCallbacks()
     gDropCallbackFnPtr = SGCT_NULL_PTR;
     gTouchCallbackFnPtr = SGCT_NULL_PTR;
 
-    for(unsigned int i=0; i < mTimers.size(); i++)
+    for(auto & mTimer : mTimers)
     {
-        mTimers[i].mCallback = NULL;
+        mTimer.mCallback = nullptr;
     }
 }
 
@@ -1444,7 +1444,7 @@ void sgct::Engine::renderDisplayInfo()
     
     sgct_text::Font * font = sgct_text::FontManager::instance()->getFont( "SGCTFont", font_size );
 
-    if( font != NULL )
+    if( font != nullptr )
     {
         float lineHeight = font->getHeight() * 1.59f;
         float xPos = static_cast<float>(getCurrentWindowPtr()->getXResolution()) * SGCTSettings::instance()->getOSDTextXOffset();
@@ -1790,8 +1790,8 @@ void sgct::Engine::renderFBOTexture()
     //clear buffers
     mCurrentFrustumMode = win->getStereoMode() == SGCTWindow::Active_Stereo ? sgct_core::Frustum::StereoLeftEye : sgct_core::Frustum::MonoEye;
 
-    int xSize = static_cast<int>(ceilf(win->getXScale() * static_cast<float>(win->getXResolution())));
-    int ySize = static_cast<int>(ceilf(win->getYScale() * static_cast<float>(win->getYResolution())));
+    auto xSize = static_cast<int>(ceilf(win->getXScale() * static_cast<float>(win->getXResolution())));
+    auto ySize = static_cast<int>(ceilf(win->getYScale() * static_cast<float>(win->getYResolution())));
         
     glViewport (0, 0, xSize, ySize);
     setAndClearBuffer(BackBufferBlack);
@@ -1918,8 +1918,8 @@ void sgct::Engine::renderFBOTextureFixedPipeline()
     //clear buffers
     mCurrentFrustumMode = win->getStereoMode() == SGCTWindow::Active_Stereo ? sgct_core::Frustum::StereoLeftEye : sgct_core::Frustum::MonoEye;
     
-    int xSize = static_cast<int>(ceilf(win->getXScale() * static_cast<float>(win->getXResolution())));
-    int ySize = static_cast<int>(ceilf(win->getYScale() * static_cast<float>(win->getYResolution())));
+    auto xSize = static_cast<int>(ceilf(win->getXScale() * static_cast<float>(win->getXResolution())));
+    auto ySize = static_cast<int>(ceilf(win->getYScale() * static_cast<float>(win->getYResolution())));
     
     
     glViewport (0, 0, xSize, ySize);
@@ -2189,8 +2189,8 @@ void sgct::Engine::renderPostFX(TextureIndexes finalTargetIndex)
 {
     glDrawBuffer( GL_COLOR_ATTACHMENT0 );
 
-    PostFX * fx = NULL;
-    PostFX * fxPrevious = NULL;
+    PostFX * fx = nullptr;
+    PostFX * fxPrevious = nullptr;
 
     std::size_t numberOfPasses = getCurrentWindowPtr()->getNumberOfPostFXs();
     for( std::size_t i = 0; i<numberOfPasses; i++ )
@@ -2226,7 +2226,7 @@ void sgct::Engine::renderPostFX(TextureIndexes finalTargetIndex)
 
         glActiveTexture(GL_TEXTURE0);
 
-        if( fx != NULL )
+        if( fx != nullptr )
             glBindTexture(GL_TEXTURE_2D, fx->getOutputTexture() );
         else
             glBindTexture(GL_TEXTURE_2D, getCurrentWindowPtr()->getFrameBufferTexture( Intermediate ) );
@@ -2254,8 +2254,8 @@ void sgct::Engine::renderPostFXFixedPipeline(TextureIndexes finalTargetIndex)
 {
     glDrawBuffer( GL_COLOR_ATTACHMENT0 );
 
-    PostFX * fx = NULL;
-    PostFX * fxPrevious = NULL;
+    PostFX * fx = nullptr;
+    PostFX * fxPrevious = nullptr;
 
     std::size_t numberOfPasses = getCurrentWindowPtr()->getNumberOfPostFXs();
     if( numberOfPasses > 0 )
@@ -2312,7 +2312,7 @@ void sgct::Engine::renderPostFXFixedPipeline(TextureIndexes finalTargetIndex)
         glPushAttrib(GL_ALL_ATTRIB_BITS);
 
         glEnable(GL_TEXTURE_2D);
-        if( fx != NULL )
+        if( fx != nullptr )
             glBindTexture(GL_TEXTURE_2D, fx->getOutputTexture() );
         else
             glBindTexture(GL_TEXTURE_2D, getCurrentWindowPtr()->getFrameBufferTexture( Intermediate ) );
@@ -2387,9 +2387,8 @@ void sgct::Engine::updateTimers(double timeStamp)
     // check all timers if one of them has expired
     if ( isMaster() )
     {
-        for( size_t i = 0; i < mTimers.size(); ++i )
+        for(TimerInformation& currentTimer : mTimers)
         {
-            TimerInformation& currentTimer = mTimers[i];
             const double timeSinceLastFiring = timeStamp - currentTimer.mLastFired;
             if( timeSinceLastFiring > currentTimer.mInterval )
             {
@@ -2685,7 +2684,7 @@ void sgct::Engine::updateFrustums()
     SGCTWindow * win;
     sgct_core::Viewport * vp;
     
-    if (mThisNode == NULL)
+    if (mThisNode == nullptr)
         return;
 
     for(size_t w=0; w < mThisNode->getNumberOfWindows(); w++)
@@ -2908,10 +2907,10 @@ void sgct::Engine::parseArguments( int& argc, char**& argv )
     }
 
     // remove the arguments that have been processed
-    if( argumentsToRemove.size() > 0 )
+    if( !argumentsToRemove.empty() )
     {
         int newArgc = argc - static_cast<int>(argumentsToRemove.size());
-        char** newArgv = new char*[newArgc];
+        auto** newArgv = new char*[newArgc];
         int newIterator = 0;
         for( int oldIterator = 0; oldIterator < argc; ++oldIterator )
         {
@@ -2938,7 +2937,7 @@ void sgct::Engine::parseArguments( int& argc, char**& argv )
     This function sets the draw callback. It's possible to have several draw functions and change the callback on the fly preferably in a stage before the draw like the post-sync-pre-draw stage or the pre-sync stage.
     The draw callback can be called several times per frame since it's called once for every viewport and once for every eye if stereoscopy is used.
 */
-void sgct::Engine::setDrawFunction(void(*fnPtr)(void))
+void sgct::Engine::setDrawFunction(void(*fnPtr)())
 {
     mDrawFnPtr = fnPtr;
 }
@@ -2959,7 +2958,7 @@ void sgct::Engine::setDrawFunction(sgct_cppxeleven::function<void(void)> fn)
     This function sets the draw 2D callback. This callback will be called after overlays and post effects has been drawn.
     This makes it possible to render text and HUDs that will not be filtered and antialiasied.
 */
-void sgct::Engine::setDraw2DFunction( void(*fnPtr)(void) )
+void sgct::Engine::setDraw2DFunction( void(*fnPtr)() )
 {
     mDraw2DFnPtr = fnPtr;
 }
@@ -2981,7 +2980,7 @@ void sgct::Engine::setDraw2DFunction(sgct_cppxeleven::function<void(void)> fn)
     This function sets the pre-sync callback. The Engine will then use the callback before the sync stage.
     In the callback set the variables that will be shared.
 */
-void sgct::Engine::setPreSyncFunction(void(*fnPtr)(void))
+void sgct::Engine::setPreSyncFunction(void(*fnPtr)())
 {
     mPreSyncFnPtr = fnPtr;
 }
@@ -3003,7 +3002,7 @@ void sgct::Engine::setPreSyncFunction(sgct_cppxeleven::function<void(void)> fn)
     This function sets the post-sync-pre-draw callback. The Engine will then use the callback after the sync stage but before the draw stage. Compared to the draw callback the post-sync-pre-draw callback is called only once per frame.
     In this callback synchronized variables can be applied or simulations depending on synchronized input can run.
 */
-void sgct::Engine::setPostSyncPreDrawFunction(void(*fnPtr)(void))
+void sgct::Engine::setPostSyncPreDrawFunction(void(*fnPtr)())
 {
     mPostSyncPreDrawFnPtr = fnPtr;
 }
@@ -3025,7 +3024,7 @@ void sgct::Engine::setPostSyncPreDrawFunction(sgct_cppxeleven::function<void(voi
     This function sets the post-draw callback. The Engine will then use the callback after the draw stage but before the OpenGL buffer swap. Compared to the draw callback the post-draw callback is called only once per frame.
     In this callback data/buffer swaps can be made.
 */
-void sgct::Engine::setPostDrawFunction(void(*fnPtr)(void))
+void sgct::Engine::setPostDrawFunction(void(*fnPtr)())
 {
     mPostDrawFnPtr = fnPtr;
 }
@@ -3047,7 +3046,7 @@ void sgct::Engine::setPostDrawFunction(sgct_cppxeleven::function<void(void)> fn)
     This function sets the initOGL callback. The Engine will then use the callback only once before the starting the render loop.
     Textures, Models, Buffers, etc. can be loaded/allocated here.
 */
-void sgct::Engine::setInitOGLFunction(void(*fnPtr)(void))
+void sgct::Engine::setInitOGLFunction(void(*fnPtr)())
 {
     mInitOGLFnPtr = fnPtr;
 }
@@ -3069,7 +3068,7 @@ void sgct::Engine::setInitOGLFunction(sgct_cppxeleven::function<void(void)> fn)
 
     \param fnPtr is the function pointer to a pre window creation callback
 */
-void sgct::Engine::setPreWindowFunction( void(*fnPtr)(void) )
+void sgct::Engine::setPreWindowFunction( void(*fnPtr)() )
 {
     mPreWindowFnPtr = fnPtr;
 }
@@ -3099,7 +3098,7 @@ void sgct::Engine::setPreWindowFunction(sgct_cppxeleven::function<void(void)> fn
     }
     \endcode
 */
-void sgct::Engine::setClearBufferFunction(void(*fnPtr)(void))
+void sgct::Engine::setClearBufferFunction(void(*fnPtr)())
 {
     mClearBufferFnPtr = fnPtr;
 }
@@ -3119,7 +3118,7 @@ void sgct::Engine::setClearBufferFunction(sgct_cppxeleven::function<void(void)> 
 
     This function sets the clean up callback which will be called in the Engine destructor before all sgct components (like window, OpenGL context, network, etc.) will be destroyed.
 */
-void sgct::Engine::setCleanUpFunction( void(*fnPtr)(void) )
+void sgct::Engine::setCleanUpFunction( void(*fnPtr)() )
 {
     mCleanUpFnPtr = fnPtr;
 }
@@ -3692,8 +3691,8 @@ void sgct::Engine::enterCurrentViewport()
 {
     sgct_core::BaseViewport * vp = getCurrentWindowPtr()->getCurrentViewport();
     
-    float xRes = static_cast<float>(getCurrentWindowPtr()->getXFramebufferResolution());
-    float yRes = static_cast<float>(getCurrentWindowPtr()->getYFramebufferResolution());
+    auto xRes = static_cast<float>(getCurrentWindowPtr()->getXFramebufferResolution());
+    auto yRes = static_cast<float>(getCurrentWindowPtr()->getYFramebufferResolution());
         
     mCurrentViewportCoords[0] =
         static_cast<int>( vp->getX() * xRes );
@@ -4050,7 +4049,7 @@ void sgct::Engine::invokeScreenShotCallback2(unsigned char * data, std::size_t w
 */
 void sgct::Engine::sendMessageToExternalControl(const void * data, int length)
 {
-    if( mNetworkConnections->getExternalControlPtr() != NULL )
+    if( mNetworkConnections->getExternalControlPtr() != nullptr )
         mNetworkConnections->getExternalControlPtr()->sendData( data, length );
 }
 
@@ -4095,7 +4094,7 @@ void sgct::Engine::transferDataToNode(const void * data, int length, int package
 */
 void sgct::Engine::sendMessageToExternalControl(const std::string& msg)
 {
-    if( mNetworkConnections->getExternalControlPtr() != NULL )
+    if( mNetworkConnections->getExternalControlPtr() != nullptr )
         mNetworkConnections->getExternalControlPtr()->sendData( (void *)msg.c_str(), static_cast<int>(msg.size()) );
 }
 
@@ -4104,7 +4103,7 @@ void sgct::Engine::sendMessageToExternalControl(const std::string& msg)
 */
 bool sgct::Engine::isExternalControlConnected()
 {
-    return (mNetworkConnections->getExternalControlPtr() != NULL && mNetworkConnections->getExternalControlPtr()->isConnected());
+    return (mNetworkConnections->getExternalControlPtr() != nullptr && mNetworkConnections->getExternalControlPtr()->isConnected());
 }
 
 /*!
@@ -4112,7 +4111,7 @@ bool sgct::Engine::isExternalControlConnected()
 */
 void sgct::Engine::setExternalControlBufferSize(unsigned int newSize)
 {
-    if( mNetworkConnections->getExternalControlPtr() != NULL )
+    if( mNetworkConnections->getExternalControlPtr() != nullptr )
         mNetworkConnections->getExternalControlPtr()->setBufferSize(newSize);
 }
 
@@ -4155,14 +4154,14 @@ void sgct::Engine::updateDrawBufferResolutions()
             if (win->getViewport(j)->hasSubViewports())
             {
                 int cubeRes = win->getViewport(j)->getNonLinearProjectionPtr()->getCubemapResolution();
-                mDrawBufferResolutions.push_back(glm::ivec2(cubeRes, cubeRes));
+                mDrawBufferResolutions.emplace_back(cubeRes, cubeRes);
             }
         }
 
         //second add window resolution
         int x, y;
         win->getFinalFBODimensions(x, y);
-        mDrawBufferResolutions.push_back(glm::ivec2(x, y));
+        mDrawBufferResolutions.emplace_back(x, y);
     }
 }
 
@@ -4316,7 +4315,7 @@ void sgct::Engine::stopTimer( size_t id )
             const TimerInformation& currentTimer = mTimers[i];
             if( currentTimer.mId == id )
             {
-                mTimers[i].mCallback = NULL;
+                mTimers[i].mCallback = nullptr;
                 // if the id found, delete this timer and return immediately
                 mTimers.erase( mTimers.begin() + i );
                 return;

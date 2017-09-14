@@ -29,10 +29,7 @@ sgct_core::SphericalMirrorProjection::SphericalMirrorProjection()
     mMatrixLoc = -1;
 }
 
-sgct_core::SphericalMirrorProjection::~SphericalMirrorProjection()
-{
-    
-}
+sgct_core::SphericalMirrorProjection::~SphericalMirrorProjection() = default;
 
 /*!
 Update projection when aspect ratio changes for the viewport.
@@ -108,7 +105,7 @@ void sgct_core::SphericalMirrorProjection::initTextures()
 
 void sgct_core::SphericalMirrorProjection::initVBO()
 {
-    if (Viewport * vp = dynamic_cast<Viewport*>(sgct::Engine::instance()->getCurrentWindowPtr()->getCurrentViewport()))
+    if (auto * vp = dynamic_cast<Viewport*>(sgct::Engine::instance()->getCurrentWindowPtr()->getCurrentViewport()))
     {
         for (int i = 0; i < LAST_MESH; i++)
             mMeshes[i].readAndGenerateMesh(
@@ -468,7 +465,7 @@ void sgct_core::SphericalMirrorProjection::renderCubemapInternal(std::size_t * s
         vp = &mSubViewports[i];
         *subViewPortIndex = i;
         faceIndex = static_cast<unsigned int>(i);
-        TextureIndex ti = static_cast<TextureIndex>(CubeFaceRight + i);
+        auto ti = static_cast<TextureIndex>(CubeFaceRight + i);
 
         if (vp->isEnabled())
         {
@@ -496,7 +493,7 @@ void sgct_core::SphericalMirrorProjection::renderCubemapInternalFixedPipeline(st
         vp = &mSubViewports[i];
         *subViewPortIndex = i;
         faceIndex = static_cast<unsigned int>(i);
-        TextureIndex ti = static_cast<TextureIndex>(CubeFaceRight + i);
+        auto ti = static_cast<TextureIndex>(CubeFaceRight + i);
 
         if (vp->isEnabled())
         {

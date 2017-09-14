@@ -10,9 +10,9 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <glm/gtx/euler_angles.hpp>
 #include <algorithm>
 
-sgct_core::ClusterManager * sgct_core::ClusterManager::mInstance = NULL;
+sgct_core::ClusterManager * sgct_core::ClusterManager::mInstance = nullptr;
 
-sgct_core::ClusterManager::ClusterManager(void)
+sgct_core::ClusterManager::ClusterManager()
 {
     masterIndex = -1;
     mThisNodeId = -1;
@@ -38,15 +38,15 @@ sgct_core::ClusterManager::~ClusterManager()
 {
     nodes.clear();
     
-    for (std::size_t i=0; i < mUsers.size(); i++)
+    for (auto & mUser : mUsers)
     {
-        delete mUsers[i];
-        mUsers[i] = NULL;
+        delete mUser;
+        mUser = nullptr;
     }
     mUsers.clear();
 
     delete mTrackingManager;
-    mTrackingManager = NULL;
+    mTrackingManager = nullptr;
 }
 
 /*!
@@ -73,7 +73,7 @@ void sgct_core::ClusterManager::addUserPtr(sgct_core::SGCTUser * userPtr)
 */
 sgct_core::SGCTNode * sgct_core::ClusterManager::getNodePtr(std::size_t index)
 {
-    return (index < nodes.size()) ? &nodes[index] : NULL;
+    return (index < nodes.size()) ? &nodes[index] : nullptr;
 }
 
 /*!
@@ -84,14 +84,14 @@ sgct_core::SGCTNode * sgct_core::ClusterManager::getNodePtr(std::size_t index)
 */
 sgct_core::SGCTNode * sgct_core::ClusterManager::getNodePtr(std::string name)
 {
-    for (std::size_t i = 0; i < nodes.size(); i++)
+    for (auto & node : nodes)
     {
-        if (nodes[i].getName().compare(name) == 0)
-            return &nodes[i];
+        if (node.getName().compare(name) == 0)
+            return &node;
     }
 
     //if not found
-    return NULL;
+    return nullptr;
 }
 
 /*!
@@ -99,7 +99,7 @@ sgct_core::SGCTNode * sgct_core::ClusterManager::getNodePtr(std::string name)
 */
 sgct_core::SGCTNode * sgct_core::ClusterManager::getThisNodePtr()
 {
-    return mThisNodeId < 0 ? NULL : &nodes[mThisNodeId];
+    return mThisNodeId < 0 ? nullptr : &nodes[mThisNodeId];
 }
 
 /*!
@@ -115,14 +115,14 @@ sgct_core::SGCTUser * sgct_core::ClusterManager::getDefaultUserPtr()
 */
 sgct_core::SGCTUser * sgct_core::ClusterManager::getUserPtr(std::string name)
 {
-    for (std::size_t i=0; i < mUsers.size(); i++)
+    for (auto & mUser : mUsers)
     {
-        if (mUsers[i]->getName().compare(name) == 0)
-            return mUsers[i];
+        if (mUser->getName().compare(name) == 0)
+            return mUser;
     }
 
     //if not found
-    return NULL;
+    return nullptr;
 }
 
 /*!
@@ -130,14 +130,14 @@ sgct_core::SGCTUser * sgct_core::ClusterManager::getUserPtr(std::string name)
 */
 sgct_core::SGCTUser * sgct_core::ClusterManager::getTrackedUserPtr()
 {
-    for (std::size_t i = 0; i < mUsers.size(); i++)
+    for (auto & mUser : mUsers)
     {
-        if (mUsers[i]->isTracked())
-            return mUsers[i];
+        if (mUser->isTracked())
+            return mUser;
     }
     
     //no tracking
-    return NULL;
+    return nullptr;
 }
 
 /*!

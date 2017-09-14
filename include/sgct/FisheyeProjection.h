@@ -23,11 +23,11 @@ namespace sgct_core
         enum FisheyeCropSide { CropLeft = 0, CropRight, CropBottom, CropTop };
 
         FisheyeProjection();
-        ~FisheyeProjection();
+        virtual ~FisheyeProjection() override;
 
-        void update(float width, float height);
-        void render();
-        void renderCubemap(std::size_t * subViewPortIndex);
+        virtual void update(float width, float height) override;
+        virtual void render() override;
+        virtual void renderCubemap(std::size_t * subViewPortIndex) override;
 
         void setDomeDiameter(float size);
         void setTilt(float angle);
@@ -42,8 +42,8 @@ namespace sgct_core
         glm::vec3 getOffset() const;
 
     private:
-        void initViewports();
-        void initShaders();
+        virtual void initViewports() override;
+        virtual void initShaders() override;
         void updateGeomerty(const float & width, const float & height);
 
         void drawCubeFace(const std::size_t & face);
@@ -54,7 +54,7 @@ namespace sgct_core
         void renderCubemapInternal(std::size_t * subViewPortIndex);
         void renderCubemapInternalFixedPipeline(std::size_t * subViewPortIndex);
 
-        void(FisheyeProjection::*mInternalRenderFn)(void);
+        void(FisheyeProjection::*mInternalRenderFn)();
         void(FisheyeProjection::*mInternalRenderCubemapFn)(std::size_t *);
 
         float mFOV;

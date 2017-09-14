@@ -37,7 +37,7 @@ public:
     /*! Get the SharedData instance */
     static SharedData * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new SharedData();
         }
@@ -48,15 +48,15 @@ public:
     /*! Destroy the SharedData */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
     void setCompression(bool state, int level = 1);
-    /*! Get the compresson ratio:
+    /*! Get the compression ratio:
     \n
     ratio = (compressed data size + Huffman tree)/(original data size)
     \n
@@ -123,9 +123,8 @@ private:
     SharedData();
     ~SharedData();
 
-    // Don't implement these, should give compile warning if used
-    SharedData( const SharedData & tm );
-    const SharedData & operator=(const SharedData & rhs );
+    SharedData( const SharedData & tm ) = delete;
+    const SharedData & operator=(const SharedData & rhs ) = delete;
 
     void writeUCharArray(unsigned char * c, uint32_t length);
     unsigned char * readUCharArray(uint32_t length);
@@ -157,7 +156,7 @@ void SharedData::writeObj( SharedObject<T> * sobj )
     T val = sobj->getVal();
     
     SGCTMutexManager::instance()->lockMutex(SGCTMutexManager::DataSyncMutex);
-    unsigned char *p = reinterpret_cast<unsigned char *>(&val);
+    auto *p = reinterpret_cast<unsigned char *>(&val);
     (*currentStorage).insert((*currentStorage).end(), p, p + sizeof(T));
     SGCTMutexManager::instance()->unlockMutex(SGCTMutexManager::DataSyncMutex);
 }
@@ -179,10 +178,10 @@ void SharedData::writeVector(SharedVector<T> * vector)
     std::vector<T> tmpVec = vector->getVal();
 
     unsigned char *p;
-    p = tmpVec.size() ? reinterpret_cast<unsigned char *>(&tmpVec[0]) : NULL;
+    p = tmpVec.size() ? reinterpret_cast<unsigned char *>(&tmpVec[0]) : nullptr;
     
     uint32_t element_size = sizeof(T);
-    uint32_t vector_size = static_cast<uint32_t>(tmpVec.size());
+    auto vector_size = static_cast<uint32_t>(tmpVec.size());
 
     writeSize(vector_size);
     if (p)
@@ -200,7 +199,7 @@ void SharedData::readVector(SharedVector<T> * vector)
     }
 
     uint32_t totalSize = size * sizeof(T);
-    unsigned char* data = new unsigned char[ totalSize ];
+    auto* data = new unsigned char[ totalSize ];
     unsigned char* c = readUCharArray( totalSize );
 
     //for(std::size_t i = 0; i < totalSize; i++)

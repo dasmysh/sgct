@@ -58,7 +58,10 @@ public:
     // Convinience enum from where to load font files
     enum FontPath{ FontPath_Local, FontPath_Default };
 
-    ~FontManager(void);
+    FontManager(const FontManager & fm) = delete;
+    const FontManager & operator=(const FontManager & rhs) = delete;
+
+    ~FontManager();
 
     bool addFont( const std::string & fontName, std::string path, FontPath fontPath = FontPath_Default );
     Font * getFont( const std::string & name, unsigned int height = mDefaultHeight );
@@ -80,7 +83,7 @@ public:
 
     static FontManager * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new FontManager();
         }
@@ -91,22 +94,19 @@ public:
     /*! Destroy the FontManager */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
 private:
-    FontManager(void);
+    FontManager();
 
     /// Helper functions
     Font * createFont( const std::string & fontName, unsigned int height );
 
-    // Don't implement these, should give compile warning if used
-    FontManager( const FontManager & fm );
-    const FontManager & operator=(const FontManager & rhs );
 
 private:
 

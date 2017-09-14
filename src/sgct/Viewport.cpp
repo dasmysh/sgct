@@ -18,7 +18,7 @@ For conditions of distribution and use, see copyright notice in sgct.h
 
 sgct_core::Viewport::Viewport()
 {
-    mNonLinearProjection = NULL;
+    mNonLinearProjection = nullptr;
     reset(0.0f, 0.0f, 1.0f, 1.0f);
 }
 
@@ -27,7 +27,7 @@ sgct_core::Viewport::Viewport()
 */
 sgct_core::Viewport::Viewport(float x, float y, float xSize, float ySize)
 {
-    mNonLinearProjection = NULL;
+    mNonLinearProjection = nullptr;
     reset(x, y, xSize, ySize);
 }
 
@@ -39,7 +39,7 @@ sgct_core::Viewport::~Viewport()
     if (mNonLinearProjection)
     {
         delete mNonLinearProjection;
-        mNonLinearProjection = NULL;
+        mNonLinearProjection = nullptr;
     }
     
     if (mOverlayTextureIndex)
@@ -54,36 +54,36 @@ sgct_core::Viewport::~Viewport()
 
 void sgct_core::Viewport::configure(tinyxml2::XMLElement * element)
 {
-    if (element->Attribute("user") != NULL)
+    if (element->Attribute("user") != nullptr)
         setUserName(element->Attribute("user"));
 
-    if (element->Attribute("name") != NULL)
+    if (element->Attribute("name") != nullptr)
         setName(element->Attribute("name"));
 
-    if (element->Attribute("overlay") != NULL)
+    if (element->Attribute("overlay") != nullptr)
         setOverlayTexture(element->Attribute("overlay"));
 
     //for backward compability
-    if (element->Attribute("mask") != NULL)
+    if (element->Attribute("mask") != nullptr)
         setBlendMaskTexture(element->Attribute("mask"));
 
-    if (element->Attribute("BlendMask") != NULL)
+    if (element->Attribute("BlendMask") != nullptr)
         setBlendMaskTexture(element->Attribute("BlendMask"));
 
-    if (element->Attribute("BlackLevelMask") != NULL)
+    if (element->Attribute("BlackLevelMask") != nullptr)
         setBlackLevelMaskTexture(element->Attribute("BlackLevelMask"));
 
-    if (element->Attribute("mesh") != NULL)
+    if (element->Attribute("mesh") != nullptr)
         setCorrectionMesh(element->Attribute("mesh"));
 
-    if (element->Attribute("hint") != NULL)
+    if (element->Attribute("hint") != nullptr)
         mMeshHint.assign(element->Attribute("hint"));
 
-    if (element->Attribute("tracked") != NULL)
+    if (element->Attribute("tracked") != nullptr)
         setTracked(strcmp(element->Attribute("tracked"), "true") == 0 ? true : false);
 
     //get eye if set
-    if (element->Attribute("eye") != NULL)
+    if (element->Attribute("eye") != nullptr)
     {
         if (strcmp("center", element->Attribute("eye")) == 0)
         {
@@ -101,7 +101,7 @@ void sgct_core::Viewport::configure(tinyxml2::XMLElement * element)
 
     const char * val;
     tinyxml2::XMLElement * subElement = element->FirstChildElement();
-    while (subElement != NULL)
+    while (subElement != nullptr)
     {
         val = subElement->Value();
         float fTmp[2];
@@ -179,7 +179,7 @@ void sgct_core::Viewport::parsePlanarProjection(tinyxml2::XMLElement * element)
     glm::vec3 offset(0.0f, 0.0f, 0.0f);
 
     tinyxml2::XMLElement * subElement = element->FirstChildElement();
-    while (subElement != NULL)
+    while (subElement != nullptr)
     {
         val = subElement->Value();
 
@@ -237,7 +237,7 @@ void sgct_core::Viewport::parsePlanarProjection(tinyxml2::XMLElement * element)
 
 void sgct_core::Viewport::parseFisheyeProjection(tinyxml2::XMLElement * element)
 {
-    FisheyeProjection * fishProj = new FisheyeProjection();
+    auto * fishProj = new FisheyeProjection();
     for (std::size_t i = 0; i < 6; i++)
         fishProj->getSubViewportPtr(i)->setUser(mUser);
     
@@ -245,17 +245,17 @@ void sgct_core::Viewport::parseFisheyeProjection(tinyxml2::XMLElement * element)
     if (element->QueryFloatAttribute("fov", &fov) == tinyxml2::XML_NO_ERROR)
         fishProj->setFOV(fov);
 
-    if (element->Attribute("quality") != NULL)
+    if (element->Attribute("quality") != nullptr)
     {
         fishProj->setCubemapResolution(std::string(element->Attribute("quality")));
     }
 
-    if (element->Attribute("method") != NULL)
+    if (element->Attribute("method") != nullptr)
         fishProj->setRenderingMethod( 
             strcmp(element->Attribute("method"), "five_face_cube") == 0 ?
             FisheyeProjection::FiveFaceCube : FisheyeProjection::FourFaceCube);
 
-    if (element->Attribute("interpolation") != NULL)
+    if (element->Attribute("interpolation") != nullptr)
         fishProj->setInterpolationMode(
             strcmp(element->Attribute("interpolation"), "cubic") == 0 ? NonLinearProjection::Cubic : NonLinearProjection::Linear);
 
@@ -276,7 +276,7 @@ void sgct_core::Viewport::parseFisheyeProjection(tinyxml2::XMLElement * element)
     tinyxml2::XMLElement * subElement = element->FirstChildElement();
     const char * val;
 
-    while (subElement != NULL)
+    while (subElement != nullptr)
     {
         val = subElement->Value();
 
@@ -347,11 +347,11 @@ void sgct_core::Viewport::parseSpoutOutputProjection(tinyxml2::XMLElement * elem
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_WARNING, "ReadConfig: Spout library not added to SGCT.\n");
     return;
 #endif
-    SpoutOutputProjection * spoutProj = new SpoutOutputProjection();
+    auto * spoutProj = new SpoutOutputProjection();
     for (std::size_t i = 0; i < 6; i++)
         spoutProj->getSubViewportPtr(i)->setUser(mUser);
 
-    if (element->Attribute("quality") != NULL)
+    if (element->Attribute("quality") != nullptr)
     {
         spoutProj->setCubemapResolution(std::string(element->Attribute("quality")));
     }
@@ -359,7 +359,7 @@ void sgct_core::Viewport::parseSpoutOutputProjection(tinyxml2::XMLElement * elem
     tinyxml2::XMLElement * subElement = element->FirstChildElement();
     const char * val;
 
-    while (subElement != NULL)
+    while (subElement != nullptr)
     {
         val = subElement->Value();
 
@@ -391,11 +391,11 @@ void sgct_core::Viewport::parseSpoutOutputProjection(tinyxml2::XMLElement * elem
 
 void sgct_core::Viewport::parseSphericalMirrorProjection(tinyxml2::XMLElement * element)
 {
-    SphericalMirrorProjection * sphericalMirrorProj = new SphericalMirrorProjection();
+    auto * sphericalMirrorProj = new SphericalMirrorProjection();
     for (std::size_t i = 0; i < 6; i++)
         sphericalMirrorProj->getSubViewportPtr(i)->setUser(mUser);
 
-    if (element->Attribute("quality") != NULL)
+    if (element->Attribute("quality") != nullptr)
     {
         sphericalMirrorProj->setCubemapResolution(std::string(element->Attribute("quality")));
     }
@@ -410,7 +410,7 @@ void sgct_core::Viewport::parseSphericalMirrorProjection(tinyxml2::XMLElement * 
     tinyxml2::XMLElement * subElement = element->FirstChildElement();
     const char * val;
 
-    while (subElement != NULL)
+    while (subElement != nullptr)
     {
         val = subElement->Value();
 
@@ -432,22 +432,22 @@ void sgct_core::Viewport::parseSphericalMirrorProjection(tinyxml2::XMLElement * 
         }
         else if (strcmp("Geometry", val) == 0)
         {
-            if (subElement->Attribute("bottom") != NULL)
+            if (subElement->Attribute("bottom") != nullptr)
             {
                 sphericalMirrorProj->setMeshPath(SphericalMirrorProjection::BOTTOM_MESH, subElement->Attribute("bottom"));
             }
 
-            if (subElement->Attribute("left") != NULL)
+            if (subElement->Attribute("left") != nullptr)
             {
                 sphericalMirrorProj->setMeshPath(SphericalMirrorProjection::LEFT_MESH, subElement->Attribute("left"));
             }
 
-            if (subElement->Attribute("right") != NULL)
+            if (subElement->Attribute("right") != nullptr)
             {
                 sphericalMirrorProj->setMeshPath(SphericalMirrorProjection::RIGHT_MESH, subElement->Attribute("right"));
             }
 
-            if (subElement->Attribute("top") != NULL)
+            if (subElement->Attribute("top") != nullptr)
             {
                 sphericalMirrorProj->setMeshPath(SphericalMirrorProjection::TOP_MESH, subElement->Attribute("top"));
             }
@@ -490,13 +490,13 @@ void sgct_core::Viewport::loadData()
 {
     sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_DEBUG, "Viewport: loading GPU data for '%s'\n", mName.c_str());
         
-    if( mOverlayFilename.size() > 0 )
+    if( !mOverlayFilename.empty() )
         sgct::TextureManager::instance()->loadUnManagedTexture(mOverlayTextureIndex, mOverlayFilename, true, 1);
 
-    if ( mBlendMaskFilename.size() > 0 )
+    if ( !mBlendMaskFilename.empty() )
         sgct::TextureManager::instance()->loadUnManagedTexture(mBlendMaskTextureIndex, mBlendMaskFilename, true, 1);
 
-    if ( mBlackLevelMaskFilename.size() > 0)
+    if ( !mBlackLevelMaskFilename.empty())
         sgct::TextureManager::instance()->loadUnManagedTexture(mBlackLevelMaskTextureIndex, mBlackLevelMaskFilename, true, 1);
 
     //load default if mMeshFilename is empty

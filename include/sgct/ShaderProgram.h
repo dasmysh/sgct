@@ -29,7 +29,7 @@ public:
 
     ShaderProgram();
     ShaderProgram( const std::string & name );
-    ~ShaderProgram( void );
+    ~ShaderProgram(  );
 
     void deleteProgram();
 

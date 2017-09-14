@@ -27,8 +27,8 @@ sgct_core::FisheyeProjection::FisheyeProjection()
     mFOV = 180.0f;
     mTilt = 0.0f;
     mDiameter = 14.8f;
-    for (std::size_t i = 0; i < 4; i++)
-        mCropFactors[i] = 0.0;
+    for (float & mCropFactor : mCropFactors)
+        mCropFactor = 0.0;
 
     mOffset.x = 0.0f;
     mOffset.y = 0.0f;
@@ -56,10 +56,7 @@ sgct_core::FisheyeProjection::FisheyeProjection()
     mSwapFarLoc = -1;
 }
 
-sgct_core::FisheyeProjection::~FisheyeProjection()
-{
-    
-}
+sgct_core::FisheyeProjection::~FisheyeProjection() = default;
 
 /*!
 Update projection when aspect ratio changes for the viewport.

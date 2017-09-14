@@ -33,7 +33,7 @@ public:
     /*! Get the MessageHandler instance */
     static MessageHandler * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new MessageHandler();
         }
@@ -44,10 +44,10 @@ public:
     /*! Destroy the MessageHandler */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
@@ -77,18 +77,19 @@ public:
     char * getMessage();
 
 private:
-    MessageHandler(void);
-    ~MessageHandler(void);
+    MessageHandler();
+    ~MessageHandler();
+
+    MessageHandler( const MessageHandler & tm ) = delete;
+    const MessageHandler & operator=(const MessageHandler & rhs) = delete;
 
     // Don't implement these, should give compile warning if used
-    MessageHandler( const MessageHandler & tm );
-    const MessageHandler & operator=(const MessageHandler & rhs );
     void printv(const char *fmt, va_list ap);
     void logToFile(const char * buffer);
 
 private:
 #ifdef __LOAD_CPP11_FUN__
-    typedef sgct_cppxeleven::function<void(const char *)> MessageCallbackFn;
+    using MessageCallbackFn = sgct_cppxeleven::function<void(const char *)>;
 #else
     typedef void(*MessageCallbackFn)(const char *);
 #endif

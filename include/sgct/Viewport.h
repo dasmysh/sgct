@@ -27,7 +27,7 @@ class Viewport : public BaseViewport
 public:
     Viewport();
     Viewport(float x, float y, float xSize, float ySize);
-    ~Viewport();
+    virtual ~Viewport() override;
 
     void configure(tinyxml2::XMLElement * element);
     void setOverlayTexture(const char * texturePath);
@@ -42,7 +42,7 @@ public:
     inline bool hasOverlayTexture() { return mOverlayTextureIndex != GL_FALSE; }
     inline bool hasBlendMaskTexture() { return mBlendMaskTextureIndex != GL_FALSE; }
     inline bool hasBlackLevelMaskTexture() { return mBlackLevelMaskTextureIndex != GL_FALSE; }
-    inline bool hasSubViewports() { return mNonLinearProjection != NULL; }
+    inline bool hasSubViewports() { return mNonLinearProjection != nullptr; }
 
     inline const bool & hasCorrectionMesh() { return mCorrectionMesh; }
     inline const bool & isTracked() { return mTracked; }

@@ -13,60 +13,60 @@ For conditions of distribution and use, see copyright notice in sgct.h
 
 namespace sgct_core
 {
-	/*!
-	This class manages and renders non linear fisheye projections
-	*/
-	class SpoutOutputProjection : public NonLinearProjection
-	{
-	public:
-		SpoutOutputProjection();
-		~SpoutOutputProjection();
+    /*!
+    This class manages and renders non linear fisheye projections
+    */
+    class SpoutOutputProjection : public NonLinearProjection
+    {
+    public:
+        SpoutOutputProjection();
+        virtual ~SpoutOutputProjection() override;
 
-		void update(float width, float height);
-		void render();
-		void renderCubemap(std::size_t * subViewPortIndex);
+        virtual void update(float width, float height) override;
+        virtual void render() override;
+        virtual void renderCubemap(std::size_t * subViewPortIndex) override;
 
-	private:
-		void initTextures();
-		void initViewports();
-		void initShaders();
+    private:
+        virtual void initTextures() override;
+        virtual void initViewports() override;
+        virtual void initShaders() override;
 
-		void drawCubeFace(const std::size_t & face);
-		void blitCubeFace(const int & face);
-		void attachTextures(const int & face);
-		void renderInternal();
-		void renderInternalFixedPipeline();
-		void renderCubemapInternal(std::size_t * subViewPortIndex);
-		void renderCubemapInternalFixedPipeline(std::size_t * subViewPortIndex);
+        void drawCubeFace(const std::size_t & face);
+        void blitCubeFace(const int & face);
+        void attachTextures(const int & face);
+        void renderInternal();
+        void renderInternalFixedPipeline();
+        void renderCubemapInternal(std::size_t * subViewPortIndex);
+        void renderCubemapInternalFixedPipeline(std::size_t * subViewPortIndex);
 
-		void(SpoutOutputProjection::*mInternalRenderFn)(void);
-		void(SpoutOutputProjection::*mInternalRenderCubemapFn)(std::size_t *);
+        void(SpoutOutputProjection::*mInternalRenderFn)();
+        void(SpoutOutputProjection::*mInternalRenderCubemapFn)(std::size_t *);
 
-		//shader locations
-		int mSwapColorLoc, mSwapDepthLoc, mSwapNearLoc, mSwapFarLoc;
-		/*
-		// for 4 faces
-		const std::string spoutCubeMapFaceName[6] = {
-			"Right",
-			"Bottom",
-			"Top",
-			"Left",
-			"zLeft",
-			"zRight",
-		};
-		*/
-		// for 6 faces
-		const std::string spoutCubeMapFaceName[6] = {
-			"Right",
-			"zLeft",
-			"Bottom",
-			"Top",
-			"Left",
-			"zRight",
-		};
-		void *handle[6];
-		GLuint spoutTexture[6];
-	};
+        //shader locations
+        int mSwapColorLoc, mSwapDepthLoc, mSwapNearLoc, mSwapFarLoc;
+        /*
+        // for 4 faces
+        const std::string spoutCubeMapFaceName[6] = {
+            "Right",
+            "Bottom",
+            "Top",
+            "Left",
+            "zLeft",
+            "zRight",
+        };
+        */
+        // for 6 faces
+        const std::string spoutCubeMapFaceName[6] = {
+            "Right",
+            "zLeft",
+            "Bottom",
+            "Top",
+            "Left",
+            "zRight",
+        };
+        void *handle[6];
+        GLuint spoutTexture[6];
+    };
 
 }
 

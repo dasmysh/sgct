@@ -19,10 +19,10 @@ sgct_core::NonLinearProjection::NonLinearProjection()
     mUseDepthTransformation = false;
     mStereo = false;
 
-    for (int i = 0; i < LastIndex; i++)
-        mTextures[i] = GL_FALSE;
+    for (unsigned int & mTexture : mTextures)
+        mTexture = GL_FALSE;
 
-    mCubeMapFBO_Ptr = NULL;
+    mCubeMapFBO_Ptr = nullptr;
     mVBO = GL_FALSE;
     mVAO = GL_FALSE;
     mSamples = 1;
@@ -37,24 +37,24 @@ sgct_core::NonLinearProjection::NonLinearProjection()
     mVpCoords[2] = 0;
     mVpCoords[3] = 0;
 
-    mVerts = NULL;
+    mVerts = nullptr;
 
     mPreferedMonoFrustumMode = Frustum::MonoEye;
 }
 
 sgct_core::NonLinearProjection::~NonLinearProjection()
 {
-    for (int i = 0; i < LastIndex; i++)
-        if (mTextures[i] != GL_FALSE)
+    for (unsigned int & mTexture : mTextures)
+        if (mTexture != GL_FALSE)
         {
-            glDeleteTextures(1, &mTextures[i]);
-            mTextures[i] = GL_FALSE;
+            glDeleteTextures(1, &mTexture);
+            mTexture = GL_FALSE;
         }
 
     if (mVerts)
     {
         delete[] mVerts;
-        mVerts = NULL;
+        mVerts = nullptr;
     }
 
     if (mCubeMapFBO_Ptr)
@@ -98,9 +98,9 @@ void sgct_core::NonLinearProjection::init(int internalTextureFormat, unsigned in
 
 void sgct_core::NonLinearProjection::updateFrustums(const sgct_core::Frustum::FrustumMode &frustumMode, const float & near_clipping_plane, const float & far_clipping_plane)
 {
-    for (int side = 0; side < 6; side++)
-        if(mSubViewports[side].isEnabled())
-            mSubViewports[side].calculateNonLinearFrustum(frustumMode,
+    for (auto & mSubViewport : mSubViewports)
+        if(mSubViewport.isEnabled())
+            mSubViewport.calculateNonLinearFrustum(frustumMode,
                 near_clipping_plane,
                 far_clipping_plane);
 }
@@ -391,7 +391,7 @@ void sgct_core::NonLinearProjection::generateCubeMap(TextureIndex ti, int intern
     if(sgct::Engine::instance()->isOGLPipelineFixed() || sgct::SGCTSettings::instance()->getForceGlTexImage2D())
     {
         for (int side = 0; side < 6; ++side)
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, internalFormat, mCubemapResolution, mCubemapResolution, 0, format, type, NULL);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + side, 0, internalFormat, mCubemapResolution, mCubemapResolution, 0, format, type, nullptr);
     }
     else
     {
@@ -411,7 +411,7 @@ void sgct_core::NonLinearProjection::generateCubeMap(TextureIndex ti, int intern
 
 void sgct_core::NonLinearProjection::setupViewport(const std::size_t & face)
 {
-    float cmRes = static_cast<float>(mCubemapResolution);
+    auto cmRes = static_cast<float>(mCubemapResolution);
 
     //round values instead of just truncate
     mVpCoords[0] =
@@ -461,7 +461,7 @@ void sgct_core::NonLinearProjection::generateMap(TextureIndex ti, int internalFo
 
     if (sgct::Engine::instance()->isOGLPipelineFixed() || sgct::SGCTSettings::instance()->getForceGlTexImage2D())
     {
-        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mCubemapResolution, mCubemapResolution, 0, format, type, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, mCubemapResolution, mCubemapResolution, 0, format, type, nullptr);
     }
     else
     {

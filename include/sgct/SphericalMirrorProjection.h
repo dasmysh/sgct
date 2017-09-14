@@ -23,20 +23,20 @@ namespace sgct_core
         enum MeshFace { BOTTOM_MESH = 0, LEFT_MESH, RIGHT_MESH, TOP_MESH, LAST_MESH };
 
         SphericalMirrorProjection();
-        ~SphericalMirrorProjection();
+        virtual ~SphericalMirrorProjection() override;
 
-        void update(float width, float height);
-        void render();
-        void renderCubemap(std::size_t * subViewPortIndex);
+        virtual void update(float width, float height) override;
+        virtual void render() override;
+        virtual void renderCubemap(std::size_t * subViewPortIndex) override;
 
         void setTilt(float angle);
         void setMeshPath(MeshFace mf, const char * str);
 
     private:
-        void initTextures();
-        void initVBO();
-        void initViewports();
-        void initShaders();
+        virtual void initTextures() override;
+        virtual void initVBO() override;
+        virtual void initViewports() override;
+        virtual void initShaders() override;
         
         void drawCubeFace(const std::size_t & face);
         void blitCubeFace(TextureIndex &ti);
@@ -46,7 +46,7 @@ namespace sgct_core
         void renderCubemapInternal(std::size_t * subViewPortIndex);
         void renderCubemapInternalFixedPipeline(std::size_t * subViewPortIndex);
 
-        void(SphericalMirrorProjection::*mInternalRenderFn)(void);
+        void(SphericalMirrorProjection::*mInternalRenderFn)();
         void(SphericalMirrorProjection::*mInternalRenderCubemapFn)(std::size_t *);
 
         float mTilt;

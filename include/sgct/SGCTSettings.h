@@ -33,7 +33,7 @@ public:
     /*! Get the SGCTSettings instance */
     static SGCTSettings * instance()
     {
-        if( mInstance == NULL )
+        if( mInstance == nullptr )
         {
             mInstance = new SGCTSettings();
         }
@@ -44,10 +44,10 @@ public:
     /*! Destroy the SGCTSettings instance */
     static void destroy()
     {
-        if( mInstance != NULL )
+        if( mInstance != nullptr )
         {
             delete mInstance;
-            mInstance = NULL;
+            mInstance = nullptr;
         }
     }
 
@@ -137,9 +137,8 @@ private:
 
     void updateDrawBufferFlag();
 
-    // Don't implement these, should give compile warning if used
-    SGCTSettings( const SGCTSettings & settings );
-    const SGCTSettings & operator=(const SGCTSettings & settings );
+    SGCTSettings( const SGCTSettings & settings ) = delete;
+    const SGCTSettings & operator=(const SGCTSettings & settings ) = delete;
 
 private:
     static SGCTSettings * mInstance;

@@ -13,7 +13,7 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <glm/gtc/quaternion.hpp>
 //#include <glm/gtx/quaternion.hpp>
 
-typedef void * GLFWmutex;
+using GLFWmutex = void *;
 
 namespace sgct
 {

@@ -33,9 +33,9 @@ sgct::SGCTTrackingDevice::SGCTTrackingDevice(size_t parentIndex, std::string nam
     mSensorPos[0] = glm::dvec3(0.0, 0.0, 0.0);
     mSensorPos[1] = glm::dvec3(0.0, 0.0, 0.0);
 
-    mButtons = NULL;
-    mAxes = NULL;
-    mButtonTime = NULL;
+    mButtons = nullptr;
+    mAxes = nullptr;
+    mButtonTime = nullptr;
     mTrackerTime[0] = 0.0;
     mTrackerTime[1] = 0.0;
     mAnalogTime[0] = 0.0;
@@ -50,22 +50,22 @@ sgct::SGCTTrackingDevice::~SGCTTrackingDevice()
 {
     mEnabled = false;
 
-    if( mButtons != NULL )
+    if( mButtons != nullptr )
     {
         delete [] mButtons;
-        mButtons = NULL;
+        mButtons = nullptr;
     }
 
-    if( mButtonTime != NULL )
+    if( mButtonTime != nullptr )
     {
         delete [] mButtonTime;
-        mButtonTime = NULL;
+        mButtonTime = nullptr;
     }
 
-    if( mAxes != NULL )
+    if( mAxes != nullptr )
     {
         delete [] mAxes;
-        mAxes = NULL;
+        mAxes = nullptr;
     }
 }
 
@@ -92,16 +92,16 @@ Set the number of digital buttons
 */
 void sgct::SGCTTrackingDevice::setNumberOfButtons(size_t numOfButtons)
 {
-    if (mButtons != NULL)
+    if (mButtons != nullptr)
     {
         delete[] mButtons;
-        mButtons = NULL;
+        mButtons = nullptr;
     }
 
-    if (mButtonTime != NULL)
+    if (mButtonTime != nullptr)
     {
         delete[] mButtonTime;
-        mButtonTime = NULL;
+        mButtonTime = nullptr;
     }
 
     //double buffered
@@ -122,10 +122,10 @@ Set the number of analog axes
 void sgct::SGCTTrackingDevice::setNumberOfAxes(size_t numOfAxes)
 {
     //clear
-    if (mAxes != NULL)
+    if (mAxes != nullptr)
     {
         delete[] mAxes;
-        mAxes = NULL;
+        mAxes = nullptr;
     }
 
     //double buffered
@@ -141,7 +141,7 @@ void sgct::SGCTTrackingDevice::setSensorTransform(glm::dvec3 vec, glm::dquat rot
 {
     sgct::SGCTTracker * parent = sgct_core::ClusterManager::instance()->getTrackingManagerPtr()->getTrackerPtr(mParentIndex);
 
-    if (parent == NULL)
+    if (parent == nullptr)
     {
         MessageHandler::instance()->print(MessageHandler::NOTIFY_ERROR, "SGCTTrackingDevice: Error, can't get handle to tracker for device '%s'!\n", mName.c_str());
         return;

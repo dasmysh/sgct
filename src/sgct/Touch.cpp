@@ -9,13 +9,9 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <algorithm>
 #include <sstream>
 
-sgct_core::Touch::Touch()
-{
-}
+sgct_core::Touch::Touch() = default;
 
-sgct_core::Touch::~Touch()
-{
-}
+sgct_core::Touch::~Touch() = default;
 
 std::vector<sgct_core::Touch::TouchPoint> sgct_core::Touch::getLatestTouchPoints() const {
     return mTouchPoints;
@@ -51,7 +47,7 @@ void sgct_core::Touch::processPoint(int id, int action, double xpos, double ypos
 
     glm::vec2 prevPos = pos;
 
-    std::unordered_map<int, glm::vec2>::iterator prevPosMapIt = mPreviousTouchPositions.find(id);
+    auto prevPosMapIt = mPreviousTouchPositions.find(id);
     if (prevPosMapIt != mPreviousTouchPositions.end()) {
         prevPos = prevPosMapIt->second;
         if (touchAction == TouchPoint::Released) {
@@ -66,7 +62,7 @@ void sgct_core::Touch::processPoint(int id, int action, double xpos, double ypos
     }
 
     // Add to end of corrected ordered vector if new touch point
-    std::vector<int>::iterator lastIdIdx = std::find(mPrevTouchIds.begin(), mPrevTouchIds.end(), id);
+    auto lastIdIdx = std::find(mPrevTouchIds.begin(), mPrevTouchIds.end(), id);
     if (lastIdIdx == mPrevTouchIds.end()) {
         mPrevTouchIds.push_back(id);
     }
@@ -75,7 +71,7 @@ void sgct_core::Touch::processPoint(int id, int action, double xpos, double ypos
     if(touchAction == TouchPoint::Moved && glm::distance(pos, prevPos) == 0)
         touchAction = TouchPoint::Stationary;
 
-    mTouchPoints.push_back(TouchPoint(id, touchAction, pos, normpos, ((pos-prevPos)/ windowSize)));
+    mTouchPoints.emplace_back(id, touchAction, pos, normpos, ((pos-prevPos)/ windowSize));
 }
 
 void sgct_core::Touch::processPoints(GLFWtouch* touchPoints, int count, int windowWidth, int windowHeight) {
@@ -123,7 +119,7 @@ void sgct_core::Touch::processPoints(GLFWtouch* touchPoints, int count, int wind
     }
 
     for (auto& endedId : endedTouchIds) {
-        std::vector<int>::iterator foundIdx = std::find(mPrevTouchIds.begin(), mPrevTouchIds.end(), endedId);
+        auto foundIdx = std::find(mPrevTouchIds.begin(), mPrevTouchIds.end(), endedId);
         if (foundIdx != mPrevTouchIds.end())
             mPrevTouchIds.erase(foundIdx);
     }

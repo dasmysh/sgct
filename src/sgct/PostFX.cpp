@@ -19,8 +19,8 @@ bool sgct::PostFX::mDeleted = false;
 */
 sgct::PostFX::PostFX()
 {
-    mUpdateFn = NULL;
-    mRenderFn = NULL;
+    mUpdateFn = nullptr;
+    mRenderFn = nullptr;
 
     mInputTexture = GL_FALSE;
     mOutputTexture = GL_FALSE;
@@ -67,8 +67,8 @@ void sgct::PostFX::destroy()
 {
     MessageHandler::instance()->print( MessageHandler::NOTIFY_INFO, "PostFX: Pass '%s' destroying shader and texture...\n", mName.c_str() );
 
-    mRenderFn = NULL;
-    mUpdateFn = NULL;
+    mRenderFn = nullptr;
+    mUpdateFn = nullptr;
 
     if( !mDeleted )
     {
@@ -82,7 +82,7 @@ void sgct::PostFX::destroy()
 */
 void sgct::PostFX::render()
 {
-    if( mRenderFn != NULL )
+    if( mRenderFn != nullptr )
         (this->*mRenderFn)();
 }
 
@@ -122,7 +122,7 @@ void sgct::PostFX::internalRender()
 
     mShaderProgram.bind();
 
-    if( mUpdateFn != NULL )
+    if( mUpdateFn != nullptr )
         mUpdateFn();
 
     win->bindVAO();
@@ -159,7 +159,7 @@ void sgct::PostFX::internalRenderFixedPipeline()
 
     mShaderProgram.bind();
 
-    if( mUpdateFn != NULL )
+    if( mUpdateFn != nullptr )
         mUpdateFn();
 
     glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT);

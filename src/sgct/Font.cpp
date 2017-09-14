@@ -38,10 +38,7 @@ sgct_text::Font::Font( const std::string & fontName, float height ) :
 /*!
 Destructor does nothing. Fonts should be explicitly called for cleanup (Clean())
 */
-sgct_text::Font::~Font()
-{
-    // Do nothing, need to call Clean explicitly to clean up resources
-}
+sgct_text::Font::~Font() = default;
 
 /*!
 Initializes all variables needed for the font. Needs to be called
@@ -173,7 +170,7 @@ Cleans up memory used by the Font
 */
 void sgct_text::Font::clean()
 {
-    if (mFontFaceDataMap.size() > 0)
+    if (!mFontFaceDataMap.empty())
     {
         if (sgct::Engine::instance()->isOGLPipelineFixed())
         {
@@ -243,7 +240,7 @@ bool sgct_text::Font::createGlyph(wchar_t c, FontFaceData * FFDPtr)
 
     int width;
     int height;
-    unsigned char * pixels = NULL;
+    unsigned char * pixels = nullptr;
 
     //load pixel data
     GlyphData gd;
@@ -317,7 +314,7 @@ bool sgct_text::Font::getPixelData(FT_Face face, int & width, int & height, unsi
         return false;
     }
 
-    gd->mStroker = NULL;
+    gd->mStroker = nullptr;
     FT_Error error = FT_Stroker_New(mFTLibrary, &(gd->mStroker));
     if (!error)
     {
@@ -330,10 +327,10 @@ bool sgct_text::Font::getPixelData(FT_Face face, int & width, int & height, unsi
     }
 
     //Convert the glyph to a bitmap.
-    FT_Glyph_To_Bitmap(&(gd->mGlyph), ft_render_mode_normal, 0, 1);
+    FT_Glyph_To_Bitmap(&(gd->mGlyph), ft_render_mode_normal, nullptr, 1);
     gd->mBitmapGlyph = (FT_BitmapGlyph)(gd->mGlyph);
 
-    FT_Glyph_To_Bitmap(&(gd->mStrokeGlyph), ft_render_mode_normal, 0, 1);
+    FT_Glyph_To_Bitmap(&(gd->mStrokeGlyph), ft_render_mode_normal, nullptr, 1);
     gd->mBitmapStrokeGlyph = (FT_BitmapGlyph)(gd->mStrokeGlyph);
 
     //This pointer will make accessing the bitmap easier

@@ -23,12 +23,12 @@ sgct::SGCTTracker::SGCTTracker(std::string name)
 
 sgct::SGCTTracker::~SGCTTracker()
 {
-    for(size_t i=0; i<mTrackingDevices.size(); i++)
+    for(auto & mTrackingDevice : mTrackingDevices)
     {
-        if( mTrackingDevices[i] != NULL )
+        if( mTrackingDevice != nullptr )
         {
-            delete mTrackingDevices[i];
-            mTrackingDevices[i] = NULL;
+            delete mTrackingDevice;
+            mTrackingDevice = nullptr;
         }
     }
 
@@ -37,9 +37,9 @@ sgct::SGCTTracker::~SGCTTracker()
 
 void sgct::SGCTTracker::setEnabled(bool state)
 {
-    for(size_t i=0; i<mTrackingDevices.size(); i++)
+    for(auto & mTrackingDevice : mTrackingDevices)
     {
-        mTrackingDevices[i]->setEnabled( state );
+        mTrackingDevice->setEnabled( state );
     }
 }
 
@@ -54,35 +54,35 @@ void sgct::SGCTTracker::addDevice(std::string name, size_t index)
 
 sgct::SGCTTrackingDevice * sgct::SGCTTracker::getLastDevicePtr()
 {
-    return mTrackingDevices.size() > 0 ? mTrackingDevices.back() : NULL;
+    return !mTrackingDevices.empty() ? mTrackingDevices.back() : nullptr;
 }
 
 sgct::SGCTTrackingDevice * sgct::SGCTTracker::getDevicePtr(size_t index)
 {
-    return index < mTrackingDevices.size() ? mTrackingDevices[index] : NULL;
+    return index < mTrackingDevices.size() ? mTrackingDevices[index] : nullptr;
 }
 
 sgct::SGCTTrackingDevice * sgct::SGCTTracker::getDevicePtr(const char * name)
 {
-    for(size_t i=0; i<mTrackingDevices.size(); i++)
+    for(auto & mTrackingDevice : mTrackingDevices)
     {
-        if( strcmp(name, mTrackingDevices[i]->getName().c_str()) == 0 )
-            return mTrackingDevices[i];
+        if( strcmp(name, mTrackingDevice->getName().c_str()) == 0 )
+            return mTrackingDevice;
     }
 
     //if not found
-    return NULL;
+    return nullptr;
 }
 
 sgct::SGCTTrackingDevice * sgct::SGCTTracker::getDevicePtrBySensorId(int id)
 {
-    for(size_t i=0; i<mTrackingDevices.size(); i++)
+    for(auto & mTrackingDevice : mTrackingDevices)
     {
-        if( mTrackingDevices[i]->getSensorId() == id )
-            return mTrackingDevices[i];
+        if( mTrackingDevice->getSensorId() == id )
+            return mTrackingDevice;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 /*!

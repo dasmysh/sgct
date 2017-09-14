@@ -130,9 +130,9 @@ inline void pop_projection_matrix()
 char * parseArgList(va_list args, const char *format)
 {
     int size = 1 + vscprintf(format, args);
-    char * buffer = new (std::nothrow) char[size];
-    if (buffer == NULL)
-        return NULL;
+    auto * buffer = new (std::nothrow) char[size];
+    if (buffer == nullptr)
+        return nullptr;
 
     memset(buffer, 0, size);
 
@@ -148,9 +148,9 @@ char * parseArgList(va_list args, const char *format)
 wchar_t * parseArgList(va_list args, const wchar_t *format)
 {
     int size = 1 + vscwprintf(format, args);
-    wchar_t * buffer = new (std::nothrow) wchar_t[size];
-    if (buffer == NULL)
-        return NULL;
+    auto * buffer = new (std::nothrow) wchar_t[size];
+    if (buffer == nullptr)
+        return nullptr;
 
     memset(buffer, 0, size * sizeof(wchar_t));
 
@@ -448,7 +448,7 @@ void render3d(const std::vector<std::wstring> & lines, sgct_text::Font * ft_font
 
 void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, const char *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments
@@ -466,7 +466,7 @@ void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, cons
 
 void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, const wchar_t *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments
@@ -484,7 +484,7 @@ void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, cons
 
 void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, const glm::vec4 & color, const char *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments
@@ -502,7 +502,7 @@ void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, cons
 
 void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, const glm::vec4 & color, const wchar_t *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments
@@ -520,7 +520,7 @@ void print(sgct_text::Font * ft_font, TextAlignMode mode, float x, float y, cons
 
 void print3d(sgct_text::Font * ft_font, TextAlignMode mode, glm::mat4 mvp, const char *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments
@@ -539,7 +539,7 @@ void print3d(sgct_text::Font * ft_font, TextAlignMode mode, glm::mat4 mvp, const
 
 void print3d(sgct_text::Font * ft_font, TextAlignMode mode, glm::mat4 mvp, const wchar_t *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments
@@ -558,7 +558,7 @@ void print3d(sgct_text::Font * ft_font, TextAlignMode mode, glm::mat4 mvp, const
 
 void print3d(sgct_text::Font * ft_font, TextAlignMode mode, glm::mat4 mvp, const glm::vec4 & color, const char *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments
@@ -576,7 +576,7 @@ void print3d(sgct_text::Font * ft_font, TextAlignMode mode, glm::mat4 mvp, const
 
 void print3d(sgct_text::Font * ft_font, TextAlignMode mode, glm::mat4 mvp, const glm::vec4 & color, const wchar_t *format, ...)
 {
-    if (ft_font == NULL || format == NULL)
+    if (ft_font == nullptr || format == nullptr)
         return;
 
     va_list		args;	 // Pointer To List Of Arguments

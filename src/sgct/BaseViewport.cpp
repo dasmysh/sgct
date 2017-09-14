@@ -95,7 +95,7 @@ void sgct_core::BaseViewport::setUserName(std::string userName)
 void sgct_core::BaseViewport::linkUserName()
 {
     SGCTUser * user = ClusterManager::instance()->getUserPtr(mUserName);
-    if (user != NULL)
+    if (user != nullptr)
     {
         mUser = user;
     }

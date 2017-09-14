@@ -11,14 +11,14 @@ For conditions of distribution and use, see copyright notice in sgct.h
 #include <sgct/Engine.h>
 
 /*!
-    This constructor requires a valid openGL contex 
+    This constructor requires a valid openGL context 
 */
 sgct_utils::SGCTPlane::SGCTPlane(float width, float height)
 {
     //init
     mVBO = GL_FALSE;
     mVAO = GL_FALSE;
-    mVerts = NULL;
+    mVerts = nullptr;
 
     mInternalDrawFn = &SGCTPlane::drawVBO;
 
@@ -33,17 +33,17 @@ sgct_utils::SGCTPlane::SGCTPlane(float width, float height)
         
     createVBO();
 
-    if( !sgct::Engine::checkForOGLErrors() ) //if error occured
+    if( !sgct::Engine::checkForOGLErrors() ) //if error occurred
     {
         sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "SGCT Utils: Plane creation error!\n");
         void cleanup();
     }
 
     //free data
-    if( mVerts != NULL )
+    if( mVerts != nullptr )
     {
         delete [] mVerts;
-        mVerts = NULL;
+        mVerts = nullptr;
     }
 }
 
@@ -72,7 +72,7 @@ void sgct_utils::SGCTPlane::drawVBO()
     
     glBindBuffer(GL_ARRAY_BUFFER, mVBO);
     
-    glInterleavedArrays(GL_T2F_N3F_V3F, 0, 0);
+    glInterleavedArrays(GL_T2F_N3F_V3F, 0, nullptr);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
