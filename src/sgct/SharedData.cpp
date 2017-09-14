@@ -113,6 +113,24 @@ void SharedData::setEncodeFunction(void(*fnPtr)())
     mEncodeFn = fnPtr;
 }
 
+#ifdef __LOAD_CPP11_FUN__
+/*!
+Set the encode callback.
+
+Sample of a encode function:
+\code{.cpp}
+void myEncodeFun()
+{
+sgct::SharedData::instance()->writeDouble( curr_time );
+}
+\endcode
+*/
+void SharedData::setEncodeFunction(sgct_cppxeleven::function<void(void)> fn)
+{
+    mEncodeFn = fn;
+}
+#endif
+
 /*!
 Set the decoder callback.
 
@@ -128,6 +146,24 @@ void SharedData::setDecodeFunction(void(*fnPtr)())
 {
     mDecodeFn = fnPtr;
 }
+
+#ifdef __LOAD_CPP11_FUN__
+/*!
+Set the decoder callback.
+
+Sample of a decode function:
+\code{.cpp}
+void myDecodeFun()
+{
+    curr_time = sgct::SharedData::instance()->readDouble();
+}
+\endcode
+*/
+void SharedData::setDecodeFunction(sgct_cppxeleven::function<void(void)> fn)
+{
+    mDecodeFn = fn;
+}
+#endif
 
 /*!
 This fuction is called internally by SGCT and shouldn't be used by the user.

@@ -108,8 +108,13 @@ public:
     template<class T>
     void readVector(SharedVector<T> * vector);
 
-    void setEncodeFunction( void(*fnPtr)(void) );
-    void setDecodeFunction( void(*fnPtr)(void) );
+    void setEncodeFunction( void(*fnPtr)() );
+    void setDecodeFunction( void(*fnPtr)() );
+
+#ifdef __LOAD_CPP11_FUN__
+    void setEncodeFunction(sgct_cppxeleven::function<void(void)> fn);
+    void setDecodeFunction(sgct_cppxeleven::function<void(void)> fn);
+#endif
 
     void encode();
     void decode(const char * receivedData, int receivedlength, int clientIndex);
@@ -134,8 +139,8 @@ private:
 
 private:
     //function pointers
-    void (*mEncodeFn) (void);
-    void (*mDecodeFn) (void);
+    sgct_cppxeleven::function<void(void)> mEncodeFn;
+    sgct_cppxeleven::function<void(void)> mDecodeFn;
 
     static SharedData * mInstance;
     std::vector<unsigned char> dataBlock;
