@@ -457,6 +457,19 @@ bool sgct::Engine::initWindows()
     }
     break;
 
+    case OpenGL_4_6_Core_Profile:
+    {
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+#if __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glewExperimental = true; // Needed for core profile
+        mGLSLVersion.assign("#version 460 core");
+    }
+    break;
+
     case OpenGL_4_1_Debug_Core_Profile:
     {
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -524,6 +537,20 @@ bool sgct::Engine::initWindows()
         glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
         glewExperimental = true; // Needed for core profile
         mGLSLVersion.assign("#version 450 core");
+    }
+    break;
+
+    case OpenGL_4_6_Debug_Core_Profile:
+    {
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+#if __APPLE__
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
+        glewExperimental = true; // Needed for core profile
+        mGLSLVersion.assign("#version 460 core");
     }
     break;
 
@@ -723,6 +750,23 @@ void sgct::Engine::initOGL()
                 getCurrentWindowPtr()->getScreenCapturePointer(0)->setCaptureCallback(callback);
             //right channel (Stereo_Right)
             if (getCurrentWindowPtr()->getScreenCapturePointer(1) != nullptr)
+                getCurrentWindowPtr()->getScreenCapturePointer(1)->setCaptureCallback(callback);
+        }
+        else if (mScreenShotFnPtr2 != SGCT_NULL_PTR)
+        {
+            //set callback
+            sgct_cppxeleven::function< void(unsigned char *, std::size_t, sgct_core::ScreenCapture::EyeIndex, unsigned int type) > callback;
+            callback = sgct_cppxeleven::bind(&Engine::invokeScreenShotCallback2, this,
+                sgct_cppxeleven::placeholders::_1,
+                sgct_cppxeleven::placeholders::_2,
+                sgct_cppxeleven::placeholders::_3,
+                sgct_cppxeleven::placeholders::_4);
+
+            //left channel (Mono and Stereo_Left)
+            if (getCurrentWindowPtr()->getScreenCapturePointer(0) != NULL)
+                getCurrentWindowPtr()->getScreenCapturePointer(0)->setCaptureCallback(callback);
+            //right channel (Stereo_Right)
+            if (getCurrentWindowPtr()->getScreenCapturePointer(1) != NULL)
                 getCurrentWindowPtr()->getScreenCapturePointer(1)->setCaptureCallback(callback);
         }
     }
