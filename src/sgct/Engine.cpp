@@ -564,12 +564,13 @@ bool sgct::Engine::initWindows()
 
     mStatistics = new sgct_core::Statistics();
     GLFWwindow* share = nullptr;
+    size_t lastWindowIdx = mThisNode->getNumberOfWindows()-1;
     for(std::size_t i=0; i < mThisNode->getNumberOfWindows(); i++)
     {
         if( i > 0 )
             share = mThisNode->getWindowPtr(0)->getWindowHandle();
         
-        if( !mThisNode->getWindowPtr(i)->openWindow( share ) )
+        if( !mThisNode->getWindowPtr(i)->openWindow( share, lastWindowIdx) )
         {
             MessageHandler::instance()->print(MessageHandler::NOTIFY_ERROR, "Failed to open window %d!\n", i);
             return false;
@@ -2123,7 +2124,8 @@ void sgct::Engine::renderViewports(TextureIndexes ti)
                         mNearClippingPlaneDist,
                         mFarClippingPlaneDist);
 
-                vp->getNonLinearProjectionPtr()->render();
+                if (getCurrentWindowPtr()->getCallDraw3DFunction())
+                    vp->getNonLinearProjectionPtr()->render();
             }
             else //no subviewports
             {
@@ -2133,10 +2135,19 @@ void sgct::Engine::renderViewports(TextureIndexes ti)
                         mNearClippingPlaneDist,
                         mFarClippingPlaneDist);
 
-                (this->*mInternalDrawFn)();
+                //check if we want to copy the previos window into this one before we go ahead with anyting else
+                if (getCurrentWindowPtr()->getCopyPreviousWindowToCurrentWindow())
+                    copyPreviousWindowViewportToCurrentWindowViewport(mCurrentFrustumMode);
+
+                if (getCurrentWindowPtr()->getCallDraw3DFunction())
+                    (this->*mInternalDrawFn)();
             }
         }
     }
+
+    // If we did not render anything, make sure we clear the screen at least
+    if (!getCurrentWindowPtr()->getCallDraw3DFunction() && !getCurrentWindowPtr()->getCopyPreviousWindowToCurrentWindow())
+        SGCTSettings::instance()->useFBO() ? setAndClearBuffer(RenderToTexture) : setAndClearBuffer(BackBuffer);
 
     if( mFixedOGLPipeline )
         glPushAttrib( GL_ALL_ATTRIB_BITS );
@@ -2219,7 +2230,8 @@ void sgct::Engine::render2D()
                     renderDisplayInfo();
                 }
 
-                if (mDraw2DFnPtr != SGCT_NULL_PTR)
+                // Check if we should call the use defined draw2D function
+                if (mDraw2DFnPtr != SGCT_NULL_PTR && getCurrentWindowPtr()->getCallDraw2DFunction())
                     mDraw2DFnPtr();
             }
         }
@@ -2776,6 +2788,48 @@ void sgct::Engine::updateFrustums()
             }
         }
     }
+}
+
+/*!
+This function copies/render the result from the previous window same viewport(if it exists) into this window
+*/
+void sgct::Engine::copyPreviousWindowViewportToCurrentWindowViewport(sgct_core::Frustum::FrustumMode frustumMode)
+{
+    //Check that we have a previous window
+    if (getCurrentWindowIndex() < 1)
+    {
+        sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_WARNING, "Could not copy from previous window, as this window is the first one.\n");
+        return;
+    }
+
+    SGCTWindow * currentWindow = getCurrentWindowPtr();
+    SGCTWindow * previousWindow = getWindowPtr(getCurrentWindowIndex() - 1);
+
+    //run scissor test to prevent clearing of entire buffer
+    glEnable(GL_SCISSOR_TEST);
+
+    enterCurrentViewport();
+
+    //clear buffers
+    SGCTSettings::instance()->useFBO() ? setAndClearBuffer(RenderToTexture) : setAndClearBuffer(BackBuffer);
+
+    glDisable(GL_SCISSOR_TEST);
+
+    mShaders[OverlayShader].bind();
+
+    glUniform1i(mShaderLocs[OverlayTex], 0);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, previousWindow->getFrameBufferTexture(frustumMode));
+
+    getCurrentWindowPtr()->bindVAO();
+
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    //unbind
+    getCurrentWindowPtr()->unbindVAO();
+
+    ShaderProgram::unbind();
 }
 
 /*!

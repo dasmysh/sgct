@@ -164,11 +164,11 @@ bool sgct_core::ReadConfig::readAndParseXMLFile()
     {
         std::stringstream ss;
         if (xmlDoc.GetErrorStr1() && xmlDoc.GetErrorStr2())
-            ss << "Paring failed after: " << xmlDoc.GetErrorStr1() << " " << xmlDoc.GetErrorStr2();
+            ss << "Parsing failed after: " << xmlDoc.GetErrorStr1() << " " << xmlDoc.GetErrorStr2();
         else if(xmlDoc.GetErrorStr1())
-                ss << "Paring failed after: " << xmlDoc.GetErrorStr1();
+                ss << "Parsing failed after: " << xmlDoc.GetErrorStr1();
         else if(xmlDoc.GetErrorStr2())
-            ss << "Paring failed after: " << xmlDoc.GetErrorStr2();
+            ss << "Parsing failed after: " << xmlDoc.GetErrorStr2();
         else
             ss << "File not found";
         mErrorMsg = ss.str();
@@ -187,11 +187,11 @@ bool sgct_core::ReadConfig::readAndParseXMLString()
     {
         std::stringstream ss;
         if (xmlDoc.GetErrorStr1() && xmlDoc.GetErrorStr2())
-            ss << "Paring failed after: " << xmlDoc.GetErrorStr1() << " " << xmlDoc.GetErrorStr2();
+            ss << "Parsing failed after: " << xmlDoc.GetErrorStr1() << " " << xmlDoc.GetErrorStr2();
         else if (xmlDoc.GetErrorStr1())
-            ss << "Paring failed after: " << xmlDoc.GetErrorStr1();
+            ss << "Parsing failed after: " << xmlDoc.GetErrorStr1();
         else if (xmlDoc.GetErrorStr2())
-            ss << "Paring failed after: " << xmlDoc.GetErrorStr2();
+            ss << "Parsing failed after: " << xmlDoc.GetErrorStr2();
         else
             ss << "File not found";
         mErrorMsg = ss.str();
@@ -392,6 +392,15 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                     
                     if( element[1]->Attribute("border") != NULL )
                         tmpWin.setWindowDecoration( strcmp( element[1]->Attribute("border"), "true" ) == 0 ? true : false);
+
+                    if (element[1]->Attribute("draw2D") != NULL)
+                        tmpWin.setCallDraw2DFunction(strcmp(element[1]->Attribute("draw2D"), "true") == 0 ? true : false);
+
+                    if (element[1]->Attribute("draw3D") != NULL)
+                        tmpWin.setCallDraw3DFunction(strcmp(element[1]->Attribute("draw3D"), "true") == 0 ? true : false);
+
+                    if (element[1]->Attribute("copyPreviousWindowToCurrentWindow") != NULL)
+                        tmpWin.setCopyPreviousWindowToCurrentWindow(strcmp(element[1]->Attribute("copyPreviousWindowToCurrentWindow"), "true") == 0 ? true : false);
                     
                     int tmpMonitorIndex = 0;
                     if( element[1]->QueryIntAttribute("monitor", &tmpMonitorIndex ) == tinyxml2::XML_NO_ERROR)

@@ -43,6 +43,9 @@ GLFWwindow * sgct::SGCTWindow::mSharedHandle = nullptr;
 sgct::SGCTWindow::SGCTWindow(int id)
 {
     mId = id;
+    mCallDraw2DFunction = true;
+    mCallDraw3DFunction = true;
+    mCopyPreviousWindowToCurrentWindow = false;
     mUseFixResolution = false;
     mUseQuadBuffer = false;
     mFullScreen = false;
@@ -839,11 +842,47 @@ void sgct::SGCTWindow::setUseQuadbuffer(const bool state)
 }
 
 /*!
+Set if the specifed Draw2D function pointer should be called for this window.
+*/
+void sgct::SGCTWindow::setCallDraw2DFunction(const bool state)
+{
+    mCallDraw2DFunction = state;
+    if (!mCallDraw2DFunction)
+    {
+        MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Window %d: Draw 2D function disabled for this window.\n", mId);
+    }
+}
+
+/*!
+Set if the specifed Draw3D function pointer should be called for this window.
+*/
+void sgct::SGCTWindow::setCallDraw3DFunction(const bool state)
+{
+    mCallDraw3DFunction = state;
+    if (!mCallDraw3DFunction)
+    {
+        MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Window %d: Draw (3D) function disabled for this window.\n", mId);
+    }
+}
+
+/*!
+Set if the specifed Draw2D functin pointer should be called for this window.
+*/
+void sgct::SGCTWindow::setCopyPreviousWindowToCurrentWindow(const bool state)
+{
+    mCopyPreviousWindowToCurrentWindow = state;
+    if (mCopyPreviousWindowToCurrentWindow)
+    {
+        MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Window %d: CopyPreviousWindowToCurrentWindow enabled for this window.\n", mId);
+    }
+}
+
+/*!
     This function is used internally within sgct to open the window.
 
     /returns True if window was created successfully.
 */
-bool sgct::SGCTWindow::openWindow(GLFWwindow* share)
+bool sgct::SGCTWindow::openWindow(GLFWwindow* share, size_t lastWindowIdx)
 {
     glfwWindowHint(GLFW_DEPTH_BITS, 32);
     glfwWindowHint(GLFW_DECORATED, mDecorated ? GL_TRUE : GL_FALSE);
@@ -944,7 +983,14 @@ bool sgct::SGCTWindow::openWindow(GLFWwindow* share)
             1  = wait for vertical sync
             2  = fix when using swapgroups in xp and running half the framerate
         */
-        glfwSwapInterval( SGCTSettings::instance()->getSwapInterval() );
+
+        // If we would set multiple windows to use vsync, with would get a framerate of (monitor refreshrate)/(number of windows),
+        // which is something that might really slow down a multi-monitor application.
+        // Setting last window to the requested interval, which does mean all other windows will respect the last window in the pipeline.
+        if(getId() == lastWindowIdx)
+            glfwSwapInterval(SGCTSettings::instance()->getSwapInterval());
+        else
+            glfwSwapInterval(0);
 
         updateTransferCurve();
 
