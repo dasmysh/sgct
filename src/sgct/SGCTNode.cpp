@@ -47,8 +47,8 @@ bool sgct_core::SGCTNode::getKeyPressed( int key )
     if (key == GLFW_KEY_UNKNOWN)
         return false;
 
-    for(auto & mWindow : mWindows)
-        if( glfwGetKey( mWindow.getWindowHandle(), key) )
+    for(sgct::SGCTWindow & window : mWindows)
+        if( glfwGetKey(window.getWindowHandle(), key) )
             return true;
     return false;
 }
@@ -59,15 +59,15 @@ bool sgct_core::SGCTNode::getKeyPressed( int key )
 bool sgct_core::SGCTNode::shouldAllWindowsClose()
 {
     std::size_t counter = 0;
-    for(auto & mWindow : mWindows)
-        if( glfwWindowShouldClose( mWindow.getWindowHandle() ) )
+    for(sgct::SGCTWindow & window : mWindows)
+        if( glfwWindowShouldClose(window.getWindowHandle() ) )
         {
-            mWindow.setVisibility( false );
-            glfwSetWindowShouldClose( mWindow.getWindowHandle(), GL_FALSE );
+            window.setVisibility( false );
+            glfwSetWindowShouldClose(window.getWindowHandle(), GL_FALSE );
         }
 
-    for(auto & mWindow : mWindows)
-    if (!(mWindow.isVisible() || mWindow.isRenderingWhileHidden()))
+    for(sgct::SGCTWindow & window : mWindows)
+    if (!(window.isVisible() || window.isRenderingWhileHidden()))
     //if (!mWindows[i].isVisible())
         {
             counter++;
@@ -81,8 +81,8 @@ bool sgct_core::SGCTNode::shouldAllWindowsClose()
 */
 void sgct_core::SGCTNode::showAllWindows()
 {
-    for(auto & mWindow : mWindows)
-        mWindow.setVisibility( true );
+    for(sgct::SGCTWindow & window : mWindows)
+        window.setVisibility( true );
 }
 
 /*!
@@ -98,8 +98,8 @@ bool sgct_core::SGCTNode::isUsingSwapGroups()
 */
 void sgct_core::SGCTNode::hideAllWindows()
 {
-    for(auto & mWindow : mWindows)
-        mWindow.setVisibility( false );
+    for(sgct::SGCTWindow & window : mWindows)
+        window.setVisibility( false );
 }
 
 /*!

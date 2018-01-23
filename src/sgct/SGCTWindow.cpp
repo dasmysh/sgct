@@ -226,11 +226,11 @@ void sgct::SGCTWindow::close()
     mPostFXPasses.clear();
 
     MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Deleting screen capture data for window %d...\n", mId);
-    for (auto & i : mScreenCapture)
-        if( i )
+    for (sgct_core::ScreenCapture*& screenCapture : mScreenCapture)
+        if(screenCapture)
         {
-            delete i;
-            i = nullptr;
+            delete screenCapture;
+            screenCapture = nullptr;
         }
 
     //delete FBO stuff
@@ -342,17 +342,17 @@ void sgct::SGCTWindow::initOGL()
     initScreenCapture();
     loadShaders();
 
-    for (auto & mViewport : mViewports)
-        if (mViewport->hasSubViewports())
+    for (sgct_core::Viewport* viewport : mViewports)
+        if (viewport->hasSubViewports())
         {
-            setCurrentViewport(mViewport);
-            mViewport->getNonLinearProjectionPtr()->setStereo(mStereoMode != No_Stereo);
-            mViewport->getNonLinearProjectionPtr()->setPreferedMonoFrustumMode(mViewport->getEye());
-            mViewport->getNonLinearProjectionPtr()->init(mInternalColorFormat, mColorFormat, mColorDataType, mNumberOfAASamples);
+            setCurrentViewport(viewport);
+            viewport->getNonLinearProjectionPtr()->setStereo(mStereoMode != No_Stereo);
+            viewport->getNonLinearProjectionPtr()->setPreferedMonoFrustumMode(viewport->getEye());
+            viewport->getNonLinearProjectionPtr()->init(mInternalColorFormat, mColorFormat, mColorDataType, mNumberOfAASamples);
             
-            float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * mViewport->getXSize();
-            float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * mViewport->getYSize();
-            mViewport->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
+            float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * viewport->getXSize();
+            float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * viewport->getYSize();
+            viewport->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
         }
 }
 
@@ -603,29 +603,29 @@ bool sgct::SGCTWindow::update()
         resizeFBOs();
 
         //resize PBOs
-        for (auto & i : mScreenCapture)
-            if (i != nullptr)
+        for (sgct_core::ScreenCapture*& screenCapture : mScreenCapture)
+            if (screenCapture != nullptr)
             {
                 int numberOfCaputeChannels = mAlpha ? 4 : 3;
                 if (sgct::SGCTSettings::instance()->getCaptureFromBackBuffer()) //capute from buffer supports only 8-bit per color component capture (unsigned byte)
                 {
-                    i->setTextureTransferProperties(GL_UNSIGNED_BYTE, mPreferBGR);
-                    i->initOrResize(getXResolution(), getYResolution(), numberOfCaputeChannels, 1);
+                    screenCapture->setTextureTransferProperties(GL_UNSIGNED_BYTE, mPreferBGR);
+                    screenCapture->initOrResize(getXResolution(), getYResolution(), numberOfCaputeChannels, 1);
                 }
                 else //default: capture from texture (supports HDR)
                 {
-                    i->setTextureTransferProperties(mColorDataType, mPreferBGR);
-                    i->initOrResize(getXFramebufferResolution(), getYFramebufferResolution(), numberOfCaputeChannels, mBytesPerColor);
+                    screenCapture->setTextureTransferProperties(mColorDataType, mPreferBGR);
+                    screenCapture->initOrResize(getXFramebufferResolution(), getYFramebufferResolution(), numberOfCaputeChannels, mBytesPerColor);
                 }
             }
 
         //resize non linear projection buffers
-        for (auto & mViewport : mViewports)
-            if (mViewport->hasSubViewports())
+        for (sgct_core::Viewport* viewport : mViewports)
+            if (viewport->hasSubViewports())
             {
-                float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * mViewport->getXSize();
-                float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * mViewport->getYSize();
-                mViewport->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
+                float viewPortWidth = static_cast<float>(mFramebufferResolution[0]) * viewport->getXSize();
+                float viewPortHeight = static_cast<float>(mFramebufferResolution[1]) * viewport->getYSize();
+                viewport->getNonLinearProjectionPtr()->update(viewPortWidth, viewPortHeight);
             }
 
         return true;
@@ -1712,8 +1712,8 @@ void sgct::SGCTWindow::deleteAllViewports()
 {
     mCurrentViewport = nullptr;
 
-    for (auto & mViewport : mViewports)
-        delete mViewport;
+    for (sgct_core::Viewport* viewport : mViewports)
+        delete viewport;
     mViewports.clear();
 }
 

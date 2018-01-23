@@ -287,14 +287,14 @@ void sgct_core::NetworkManager::sync(sgct_core::NetworkManager::SyncMode sm, sgc
         double maxTime = -999999.0;
         double minTime = 999999.0;
 
-        for(auto & mSyncConnection : mSyncConnections)
+        for(SGCTNetwork * syncConnection : mSyncConnections)
         {
-            if( mSyncConnection->isServer() &&
-                mSyncConnection->isConnected() )
+            if(syncConnection->isServer() &&
+                syncConnection->isConnected() )
             {
                 //fprintf(stderr, "Connection: %u time: %lf ms\n", i, mSyncConnections[i]->getLoopTime()*1000.0);
 
-                double currentTime = mSyncConnection->getLoopTime();
+                double currentTime = syncConnection->getLoopTime();
                 if( currentTime > maxTime )
                     maxTime = currentTime;
                 if( currentTime < minTime )
@@ -304,7 +304,7 @@ void sgct_core::NetworkManager::sync(sgct_core::NetworkManager::SyncMode sm, sgc
                     static_cast<int>(sgct::SharedData::instance()->getDataSize()) - sgct_core::SGCTNetwork::mHeaderSize;
 
                 //iterate counter
-                int currentFrame = mSyncConnection->iterateFrameCounter();
+                int currentFrame = syncConnection->iterateFrameCounter();
 
                 /* The server only writes the sync data and never reads, no need for mutex protection
                 sgct::Engine::lockMutex(gMutex);*/
@@ -323,7 +323,7 @@ void sgct_core::NetworkManager::sync(sgct_core::NetworkManager::SyncMode sm, sgc
                 //sgct::MessageHandler::instance()->print("NetworkManager::sync size %u\n", currentSize);
 
                 //send
-                mSyncConnection->sendData(
+                syncConnection->sendData(
                     sgct::SharedData::instance()->getDataBlock(),
                     static_cast<int>(sgct::SharedData::instance()->getDataSize()) );
                 //sgct::Engine::unlockMutex(gMutex);
@@ -335,16 +335,16 @@ void sgct_core::NetworkManager::sync(sgct_core::NetworkManager::SyncMode sm, sgc
     }
 
     else if(sm == AcknowledgeData)
-        for(auto & mSyncConnection : mSyncConnections)
+        for(SGCTNetwork * syncConnection : mSyncConnections)
         {
             //Client
-            if( !mSyncConnection->isServer() &&
-                mSyncConnection->isConnected() )
+            if( !syncConnection->isServer() &&
+                syncConnection->isConnected() )
             {
                 //The servers's render function is locked until a message starting with the ack-byte is received.
 
                 //send message to server
-                mSyncConnection->pushClientMessage();
+                syncConnection->pushClientMessage();
             }
         }
 }
@@ -356,8 +356,8 @@ void sgct_core::NetworkManager::sync(sgct_core::NetworkManager::SyncMode sm, sgc
 bool sgct_core::NetworkManager::isSyncComplete()
 {
     unsigned int counter = 0;
-    for(auto & mSyncConnection : mSyncConnections)
-        if(mSyncConnection->isUpdated()) //has all data been received?
+    for(SGCTNetwork * syncConnection : mSyncConnections)
+        if(syncConnection->isUpdated()) //has all data been received?
         {
             counter++;
         }
@@ -383,10 +383,10 @@ void sgct_core::NetworkManager::transferData(const void * data, int length, int 
     if (prepareTransferData(data, &buffer, sendSize, packageId))
     {
         //Send the data
-        for (auto & mDataTransferConnection : mDataTransferConnections)
-        if (mDataTransferConnection->isConnected())
+        for (SGCTNetwork * dataTransferConnection : mDataTransferConnections)
+        if (dataTransferConnection->isConnected())
         {
-            mDataTransferConnection->sendData(buffer, sendSize);
+            dataTransferConnection->sendData(buffer, sendSize);
         }
     }
 
@@ -626,14 +626,14 @@ void sgct_core::NetworkManager::updateConnectionStatus(SGCTNetwork * connection)
     sgct::SGCTMutexManager::instance()->unlockMutex( sgct::SGCTMutexManager::DataSyncMutex );
 
     //count connections
-    for(auto & mNetworkConnection : mNetworkConnections)
+    for(SGCTNetwork* networkConnection : mNetworkConnections)
     {
-        if( mNetworkConnection != nullptr && mNetworkConnection->isConnected() )
+        if(networkConnection != nullptr && networkConnection->isConnected() )
         {
             numberOfConnectionsCounter++;
-            if(mNetworkConnection->getType() == SGCTNetwork::SyncConnection)
+            if(networkConnection->getType() == SGCTNetwork::SyncConnection)
                 numberOfConnectedSyncNodesCounter++;
-            else if (mNetworkConnection->getType() == SGCTNetwork::DataTransfer)
+            else if (networkConnection->getType() == SGCTNetwork::DataTransfer)
                 numberOfConnectedDataTransferNodesCounter++;
         }
     }
@@ -670,26 +670,26 @@ void sgct_core::NetworkManager::updateConnectionStatus(SGCTNetwork * connection)
         //send cluster connected message to nodes/slaves
         if(allNodesConnectedCopy)
         {
-            for(auto & mSyncConnection : mSyncConnections)
-                if( mSyncConnection->isConnected() )
+            for(SGCTNetwork* syncConnection : mSyncConnections)
+                if(syncConnection->isConnected() )
                 {
                     char tmpc[SGCTNetwork::mHeaderSize];
                     tmpc[0] = SGCTNetwork::ConnectedId;
                     for(unsigned int j=1; j<SGCTNetwork::mHeaderSize; j++)
                         tmpc[j] = SGCTNetwork::DefaultId;
 
-                    mSyncConnection->sendData(&tmpc, SGCTNetwork::mHeaderSize);
+                    syncConnection->sendData(&tmpc, SGCTNetwork::mHeaderSize);
                 }
 
-            for(auto & mDataTransferConnection : mDataTransferConnections)
-                if( mDataTransferConnection->isConnected() )
+            for(SGCTNetwork* dataTransferConnection : mDataTransferConnections)
+                if(dataTransferConnection->isConnected() )
                 {
                     char tmpc[SGCTNetwork::mHeaderSize];
                     tmpc[0] = SGCTNetwork::ConnectedId;
                     for(unsigned int j=1; j<SGCTNetwork::mHeaderSize; j++)
                         tmpc[j] = SGCTNetwork::DefaultId;
 
-                    mDataTransferConnection->sendData(&tmpc, SGCTNetwork::mHeaderSize);
+                    dataTransferConnection->sendData(&tmpc, SGCTNetwork::mHeaderSize);
                 }
         }
 
@@ -745,21 +745,21 @@ void sgct_core::NetworkManager::close()
     gCond.notify_all();
 
     //signal to terminate
-    for(auto & mNetworkConnection : mNetworkConnections)
-        if(mNetworkConnection != nullptr)
+    for(SGCTNetwork* networkConnection : mNetworkConnections)
+        if(networkConnection != nullptr)
         {
-            mNetworkConnection->initShutdown();
+            networkConnection->initShutdown();
         }
 
     //wait for all nodes callbacks to run
     std::this_thread::sleep_for(std::chrono::milliseconds( 250 ) );
 
     //wait for threads to die
-    for(auto & mNetworkConnection : mNetworkConnections)
-        if(mNetworkConnection != nullptr)
+    for(SGCTNetwork* networkConnection : mNetworkConnections)
+        if(networkConnection != nullptr)
         {
-            mNetworkConnection->closeNetwork(false);
-            delete mNetworkConnection;
+            networkConnection->closeNetwork(false);
+            delete networkConnection;
         }
 
     mNetworkConnections.clear();
@@ -907,10 +907,10 @@ void sgct_core::NetworkManager::getHostInfo()
 
     freeaddrinfo(info);
 
-    for (auto & mDNSName : mDNSNames)
+    for (std::string & dnsName : mDNSNames)
     {
-        std::transform(mDNSName.begin(), mDNSName.end(), mDNSName.begin(), ::tolower);
-        mLocalAddresses.push_back(mDNSName);
+        std::transform(dnsName.begin(), dnsName.end(), dnsName.begin(), ::tolower);
+        mLocalAddresses.push_back(dnsName);
 
         //fprintf(stderr, "Adding dns name: %s\n", mLocalAddresses.back().c_str());
     }
@@ -927,8 +927,8 @@ void sgct_core::NetworkManager::getHostInfo()
 
 bool sgct_core::NetworkManager::matchAddress(const std::string address)
 {
-    for (auto & mLocalAddresse : mLocalAddresses)
-        if (strcmp(address.c_str(), mLocalAddresse.c_str()) == 0)
+    for (std::string & localAddresse : mLocalAddresses)
+        if (strcmp(address.c_str(), localAddresse.c_str()) == 0)
             return true;
     //No match
     return false;

@@ -54,12 +54,12 @@ Will deattach all attached shaders, delete them and then delete the program
 */
 void sgct::ShaderProgram::deleteProgram()
 {        
-    for(auto & mShader : mShaders)
+    for(sgct_core::ShaderData & shader : mShaders)
     {
-        if( mShader.mShader.getId() > GL_FALSE )
+        if(shader.mShader.getId() > GL_FALSE )
         {
-            glDetachShader( mProgramId, mShader.mShader.getId() );
-            mShader.mShader.deleteShader();
+            glDetachShader( mProgramId, shader.mShader.getId() );
+            shader.mShader.deleteShader();
         }
     }
 
@@ -163,10 +163,10 @@ bool sgct::ShaderProgram::createAndLinkProgram()
     //
     // Link shaders
     //
-    for(auto & mShader : mShaders)
-        if( mShader.mShader.getId() > GL_FALSE )
+    for(sgct_core::ShaderData & shader : mShaders)
+        if(shader.mShader.getId() > GL_FALSE )
         {
-            glAttachShader( mProgramId, mShader.mShader.getId() );
+            glAttachShader( mProgramId, shader.mShader.getId() );
         }
 
     glLinkProgram( mProgramId );
@@ -185,17 +185,17 @@ bool sgct::ShaderProgram::reload()
     
     deleteProgram();
 
-    for(auto & mShader : mShaders)
+    for(sgct_core::ShaderData & shader : mShaders)
     {
         bool success;
-        if( mShader.mIsSrcFile )
-            success = mShader.mShader.setSourceFromFile( mShader.mShaderSrc );
+        if(shader.mIsSrcFile )
+            success = shader.mShader.setSourceFromFile(shader.mShaderSrc );
         else
-            success = mShader.mShader.setSourceFromString( mShader.mShaderSrc );
+            success = shader.mShader.setSourceFromString(shader.mShaderSrc );
 
         if( !success )
         {
-            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "ShaderProgram: Failed to load '%s'!\n", mShader.mShaderSrc.c_str() );
+            sgct::MessageHandler::instance()->print(sgct::MessageHandler::NOTIFY_ERROR, "ShaderProgram: Failed to load '%s'!\n", shader.mShaderSrc.c_str() );
             return false;
         }
     }

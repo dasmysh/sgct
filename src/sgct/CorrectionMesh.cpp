@@ -95,10 +95,10 @@ sgct_core::CorrectionMesh::CorrectionMesh()
     mTempVertices = nullptr;
     mTempIndices = nullptr;
 
-    for (auto & mGeometrie : mGeometries)
+    for (CorrectionMeshGeometry & geometry : mGeometries)
     {
-        mGeometrie.mNumberOfVertices = 0;
-        mGeometrie.mNumberOfIndices = 0;
+        geometry.mNumberOfVertices = 0;
+        geometry.mNumberOfIndices = 0;
     }
 }
 
@@ -113,7 +113,7 @@ This function finds a suitible parser for warping meshes and loads them into mem
 @return true if mesh found and loaded successfully
 */
 bool sgct_core::CorrectionMesh::readAndGenerateMesh(std::string meshPath, sgct_core::Viewport * parent,
-		                                            MeshHint hint)
+                                                    MeshHint hint)
 {    
     //generate unwarped mask
     setupSimpleMesh(&mGeometries[QUAD_MESH], parent);

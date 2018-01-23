@@ -27,8 +27,8 @@ sgct_core::FisheyeProjection::FisheyeProjection()
     mFOV = 180.0f;
     mTilt = 0.0f;
     mDiameter = 14.8f;
-    for (float & mCropFactor : mCropFactors)
-        mCropFactor = 0.0;
+    for (float & cropFactor : mCropFactors)
+        cropFactor = 0.0;
 
     mOffset.x = 0.0f;
     mOffset.y = 0.0f;

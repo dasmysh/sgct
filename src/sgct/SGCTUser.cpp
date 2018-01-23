@@ -16,8 +16,8 @@ sgct_core::SGCTUser::SGCTUser(std::string name)
 {
     mName = name;
     
-    for(auto & mPo : mPos)
-        mPo = glm::vec3(0.0f);
+    for(glm::vec3& pos : mPos)
+        pos = glm::vec3(0.0f);
     mEyeSeparation = 0.06f;
     mHalfEyeSeparation = mEyeSeparation / 2.0f;
     mTransform = glm::dmat4(1.0);

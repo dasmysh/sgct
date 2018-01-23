@@ -487,8 +487,8 @@ void sgct::TextureManager::freeTextureData()
 {
     //the textures might not be stored in a sequence so
     //let's erase them one by one
-    for (auto & mTexture : mTextures)
-        if (mTexture.second.mId)
-            glDeleteTextures(1, &(mTexture.second.mId));
+    for (std::pair<const std::string, sgct_core::TextureData> & texture : mTextures)
+        if (texture.second.mId)
+            glDeleteTextures(1, &(texture.second.mId));
     mTextures.clear();
 }

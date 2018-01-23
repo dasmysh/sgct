@@ -23,12 +23,12 @@ sgct::SGCTTracker::SGCTTracker(std::string name)
 
 sgct::SGCTTracker::~SGCTTracker()
 {
-    for(auto & mTrackingDevice : mTrackingDevices)
+    for(SGCTTrackingDevice*& trackingDevice : mTrackingDevices)
     {
-        if( mTrackingDevice != nullptr )
+        if(trackingDevice != nullptr )
         {
-            delete mTrackingDevice;
-            mTrackingDevice = nullptr;
+            delete trackingDevice;
+            trackingDevice = nullptr;
         }
     }
 
@@ -37,9 +37,9 @@ sgct::SGCTTracker::~SGCTTracker()
 
 void sgct::SGCTTracker::setEnabled(bool state)
 {
-    for(auto & mTrackingDevice : mTrackingDevices)
+    for(SGCTTrackingDevice* trackingDevice : mTrackingDevices)
     {
-        mTrackingDevice->setEnabled( state );
+        trackingDevice->setEnabled( state );
     }
 }
 

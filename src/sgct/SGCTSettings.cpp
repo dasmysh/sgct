@@ -45,7 +45,7 @@ sgct::SGCTSettings::SGCTSettings()
 
     mDefaultNumberOfAASamples = 1;
 
-    for(auto & path : mCapturePath)
+    for(std::string & path : mCapturePath)
         path.assign("SGCT");
     mCaptureFormat = sgct_core::ScreenCapture::NOT_SET;
 

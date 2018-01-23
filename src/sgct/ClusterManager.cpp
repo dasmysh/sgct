@@ -38,10 +38,10 @@ sgct_core::ClusterManager::~ClusterManager()
 {
     nodes.clear();
     
-    for (auto & mUser : mUsers)
+    for (SGCTUser *& user : mUsers)
     {
-        delete mUser;
-        mUser = nullptr;
+        delete user;
+        user = nullptr;
     }
     mUsers.clear();
 
@@ -84,7 +84,7 @@ sgct_core::SGCTNode * sgct_core::ClusterManager::getNodePtr(std::size_t index)
 */
 sgct_core::SGCTNode * sgct_core::ClusterManager::getNodePtr(std::string name)
 {
-    for (auto & node : nodes)
+    for (SGCTNode & node : nodes)
     {
         if (node.getName().compare(name) == 0)
             return &node;
@@ -115,10 +115,10 @@ sgct_core::SGCTUser * sgct_core::ClusterManager::getDefaultUserPtr()
 */
 sgct_core::SGCTUser * sgct_core::ClusterManager::getUserPtr(std::string name)
 {
-    for (auto & mUser : mUsers)
+    for (SGCTUser * user : mUsers)
     {
-        if (mUser->getName().compare(name) == 0)
-            return mUser;
+        if (user->getName().compare(name) == 0)
+            return user;
     }
 
     //if not found
@@ -130,10 +130,10 @@ sgct_core::SGCTUser * sgct_core::ClusterManager::getUserPtr(std::string name)
 */
 sgct_core::SGCTUser * sgct_core::ClusterManager::getTrackedUserPtr()
 {
-    for (auto & mUser : mUsers)
+    for (SGCTUser * user : mUsers)
     {
-        if (mUser->isTracked())
-            return mUser;
+        if (user->isTracked())
+            return user;
     }
     
     //no tracking

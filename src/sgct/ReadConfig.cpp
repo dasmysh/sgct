@@ -76,9 +76,7 @@ sgct_core::ReadConfig::ReadConfig( const std::string filename )
                                                 ClusterManager::instance()->getNodePtr(i)->getSyncPort().c_str());
 }
 
-sgct_core::ReadConfig::~ReadConfig()
-{
-}
+sgct_core::ReadConfig::~ReadConfig() = default;
 
 bool sgct_core::ReadConfig::replaceEnvVars( const std::string &filename )
 {
@@ -407,14 +405,14 @@ bool sgct_core::ReadConfig::readAndParseXML(tinyxml2::XMLDocument& xmlDoc)
                         tmpWin.setFullScreenMonitorIndex( tmpMonitorIndex );
                     
                     if( element[1]->Attribute("mpcdi") != NULL ) {
-                    	sgct_core::SGCTMpcdi mpcdiHandler(mErrorMsg);
-						std::string pathToMpcdiFile;
-						size_t lastSlashPos = xmlFileName.find_last_of("/");
-						if (lastSlashPos != std::string::npos)
-						    pathToMpcdiFile = xmlFileName.substr(0, lastSlashPos) + "/";
-						pathToMpcdiFile += element[1]->Attribute("mpcdi");
-						//replace all backslashes with slashes
-						std::replace(pathToMpcdiFile.begin(), pathToMpcdiFile.end(), '\\', '/');
+                        sgct_core::SGCTMpcdi mpcdiHandler(mErrorMsg);
+                        std::string pathToMpcdiFile;
+                        size_t lastSlashPos = xmlFileName.find_last_of("/");
+                        if (lastSlashPos != std::string::npos)
+                            pathToMpcdiFile = xmlFileName.substr(0, lastSlashPos) + "/";
+                        pathToMpcdiFile += element[1]->Attribute("mpcdi");
+                        //replace all backslashes with slashes
+                        std::replace(pathToMpcdiFile.begin(), pathToMpcdiFile.end(), '\\', '/');
                         if( !mpcdiHandler.parseConfiguration(pathToMpcdiFile, tmpNode, tmpWin) ) {
                             return false;
                         }

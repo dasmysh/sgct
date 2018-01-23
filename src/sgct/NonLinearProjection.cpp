@@ -98,9 +98,9 @@ void sgct_core::NonLinearProjection::init(int internalTextureFormat, unsigned in
 
 void sgct_core::NonLinearProjection::updateFrustums(const sgct_core::Frustum::FrustumMode &frustumMode, const float & near_clipping_plane, const float & far_clipping_plane)
 {
-    for (auto & mSubViewport : mSubViewports)
-        if(mSubViewport.isEnabled())
-            mSubViewport.calculateNonLinearFrustum(frustumMode,
+    for (sgct_core::BaseViewport & subViewport : mSubViewports)
+        if(subViewport.isEnabled())
+            subViewport.calculateNonLinearFrustum(frustumMode,
                 near_clipping_plane,
                 far_clipping_plane);
 }

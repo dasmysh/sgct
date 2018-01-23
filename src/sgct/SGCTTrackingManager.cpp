@@ -148,10 +148,10 @@ void sgct::SGCTTrackingManager::startSampling()
 */
 void sgct::SGCTTrackingManager::updateTrackingDevices()
 {
-    for(auto & mTracker : mTrackers)
-        for(size_t j=0; j<mTracker->getNumberOfDevices(); j++)
+    for(SGCTTracker* tracker : mTrackers)
+        for(size_t j=0; j<tracker->getNumberOfDevices(); j++)
         {
-            SGCTTrackingDevice * tdPtr = mTracker->getDevicePtr(j);
+            SGCTTrackingDevice * tdPtr = tracker->getDevicePtr(j);
             if( tdPtr->isEnabled() && tdPtr == mHead && mHeadUser != nullptr)
             {
                 mHeadUser->setTransform(tdPtr->getWorldTransform());
@@ -348,10 +348,10 @@ sgct::SGCTTracker * sgct::SGCTTrackingManager::getTrackerPtr(size_t index)
 
 sgct::SGCTTracker * sgct::SGCTTrackingManager::getTrackerPtr(const char * name)
 {
-    for(auto & mTracker : mTrackers)
+    for(SGCTTracker* tracker : mTrackers)
     {
-        if( strcmp(name, mTracker->getName().c_str()) == 0 )
-            return mTracker;
+        if( strcmp(name, tracker->getName().c_str()) == 0 )
+            return tracker;
     }
 
     //MessageHandler::instance()->print(MessageHandler::NOTIFY_ERROR, "SGCTTrackingManager: Tracker '%s' not found!\n", name);
@@ -362,9 +362,9 @@ sgct::SGCTTracker * sgct::SGCTTrackingManager::getTrackerPtr(const char * name)
 
 void sgct::SGCTTrackingManager::setEnabled(bool state)
 {
-    for(auto & mTracker : mTrackers)
+    for(SGCTTracker* tracker : mTrackers)
     {
-        mTracker->setEnabled( state );
+        tracker->setEnabled( state );
     }
 }
 

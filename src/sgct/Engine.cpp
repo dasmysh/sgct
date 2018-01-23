@@ -152,8 +152,8 @@ sgct::Engine::Engine( int& argc, char**& argv )
     mCurrentRenderTarget = WindowBuffer;
     mCurrentOffScreenBuffer = nullptr;
 
-    for(int & mShaderLoc : mShaderLocs)
-        mShaderLoc = -1;
+    for(int & shaderLoc : mShaderLocs)
+        shaderLoc = -1;
 
     setClearBufferFunction( clearBuffer );
     mNearClippingPlaneDist = 0.1f;
@@ -885,8 +885,8 @@ void sgct::Engine::clean()
 
     MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Destroying shader manager and internal shaders...\n");
     ShaderManager::destroy();
-    for(auto & mShader : mShaders)
-        mShader.deleteProgram();
+    for(sgct::ShaderProgram & shader : mShaders)
+        shader.deleteProgram();
 
     MessageHandler::instance()->print(MessageHandler::NOTIFY_INFO, "Destroying texture manager...\n");
     TextureManager::destroy();
@@ -959,9 +959,9 @@ void sgct::Engine::clearAllCallbacks()
     gDropCallbackFnPtr = SGCT_NULL_PTR;
     gTouchCallbackFnPtr = SGCT_NULL_PTR;
 
-    for(auto & mTimer : mTimers)
+    for(sgct::Engine::TimerInformation & timer : mTimers)
     {
-        mTimer.mCallback = nullptr;
+        timer.mCallback = nullptr;
     }
 }
 
